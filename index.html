@@ -1,27 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-<head>
+<script src="https://unpkg.com/vue@next"></script><head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-    <div id="app">
-        {{ message }}
+    <div id="counter">
+        Counter: {{ counter }}
     </div>
 
-    <div id="app-2">
+    <div id="bind-attribute">
   <span v-bind:title="message">
-    Hover your mouse over me for a few seconds
-    to see my dynamically bound title!
+    Hover your mouse over me for a few seconds to see my dynamically bound
+    title!
   </span>
     </div>
 
-    <div id="app-3">
+    <div id="event-handling">
+        <p>{{ message }}</p>
+        <button v-on:click="reverseMessage">Reverse Message</button>
+    </div>
+
+    <div id="two-way-binding">
+        <p>{{ message }}</p>
+        <input v-model="message" />
+    </div>
+
+    <div id="conditional-rendering">
         <span v-if="seen">Now you see me</span>
     </div>
 
-    <div id="app-4">
+    <div id="list-rendering">
         <ol>
             <li v-for="todo in todos">
                 {{ todo.text }}
@@ -29,17 +38,7 @@
         </ol>
     </div>
 
-    <div id="app-5">
-        <p>{{ message }}</p>
-        <button v-on:click="reverseMessage">Reverse Message</button>
-    </div>
-
-    <div id="app-6">
-        <p>{{ message }}</p>
-        <input v-model="message">
-    </div>
-
-    <div id="app-7">
+    <div id="todo-list-app">
         <ol>
             <!--
               Now we provide each todo-item with the todo object
