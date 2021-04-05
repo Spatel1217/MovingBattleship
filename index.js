@@ -21,7 +21,7 @@ const AttributeBinding = {
 }
 Vue.createApp(AttributeBinding).mount('#bind-attribute')
 
-const EventHandling = {
+const EventHandling = { //use this button functionality to react to the text
     data() {
         return {
             message: 'Hello Vue.js!'
@@ -38,7 +38,7 @@ const EventHandling = {
 }
 Vue.createApp(EventHandling).mount('#event-handling')
 
-const TwoWayBinding = {
+const TwoWayBinding = { //use this to hold the text box
     data() {
         return {
             message: 'Hello Vue!'
@@ -89,3 +89,20 @@ app.component('todo-item', {
 })
 
 app.mount('#todo-list-app')
+
+
+const TextBox = {
+    data() {
+        return {
+            message: "hi",
+            response: "yo"
+        }
+    },
+    methods: { //create a list with vue (?) use input and the push method to push our message into the list, have it displayed
+        confirmation() {
+            this.response = "your command has been read soldier: " + this.message // not using current user input
+        }
+    }
+}
+
+Vue.createApp(TextBox).mount('#command-box')

@@ -53,6 +53,15 @@
             ></todo-item>
         </ol>
     </div>
+
+    <div id = "command-box">
+        <p> {{ message }} </p>
+        <p> {{ response }} </p>
+        <input @keyup.enter="confirmation"/>
+        <!--
+          when enter is pressed, it calls the confirmation method to edit the response variable
+        -->
+    </div>
     <script src="index.js"></script>
 </body>
 </html>
