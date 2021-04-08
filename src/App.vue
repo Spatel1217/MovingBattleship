@@ -1,37 +1,58 @@
 <template>
-  <v-app>
-    <v-main>
-      <git-hub />
-      <grid />
-    </v-main>
-  </v-app>
+  <CommandBox />
 </template>
 
 <script>
-import Grid from "./components/Grid";
-import GitHub from "./components/GitHub";
+import CommandBox from "../VueGettingStartedTutorial/CommandBox";
 
 export default {
   name: "App",
 
   components: {
-    Grid,
-    GitHub
-  },
-
-  data: () => ({
-    //
-  })
-};
-</script>
-<style>
-#app {
-  background: #232222;
+    CommandBox
+  }
 }
+</script>
+
+<style>
+
 </style>
 
-/**
-app background
-card theme
-on hover card
- */
+<!--<template>-->
+<!--  <v-app>-->
+<!--    <v-main>-->
+<!--      <git-hub />-->
+<!--      <grid />-->
+<!--    </v-main>-->
+<!--  </v-app>-->
+<!--</template>-->
+
+<!--<script>-->
+<!--import Grid from "./components/Grid";-->
+<!--import GitHub from "./components/GitHub";-->
+
+<!--export default {-->
+<!--  name: "App",-->
+
+<!--  components: {-->
+<!--    Grid,-->
+<!--    GitHub-->
+<!--  },-->
+
+<!--  data: () => ({-->
+<!--    //-->
+<!--  })-->
+<!--};-->
+<!--</script>-->
+<!--<style>-->
+<!--#app {-->
+<!--  background: #232222;-->
+<!--}-->
+<!--</style>-->
+
+<!--/**-->
+<!--app background-->
+<!--card theme-->
+<!--on hover card-->
+<!-- */-->
+
