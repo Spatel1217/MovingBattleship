@@ -9,7 +9,7 @@
           <v-btn
             color="green lighten-1"
             text
-            @click="restartGame(), restartTime(), setPattern()"
+            @click="restartGame(), setPattern()"
           >Yes</v-btn>
         </v-card-actions>
       </v-card>
