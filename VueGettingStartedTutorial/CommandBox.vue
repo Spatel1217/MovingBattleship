@@ -6,6 +6,9 @@
     </div>
     <input type="text" v-model="currentCommand" @keyup.enter="registerCommand">
   </div>
+  <div v-if="inputError" class="error">
+    {{ inputError }}
+  </div>
 </template>
 
 <script>
@@ -13,7 +16,8 @@ export default {
   data() {
     return {
       currentCommand: '',
-      previousCommands: []
+      previousCommands: [],
+      inputError: ''
     }
   },
   methods: {
@@ -38,5 +42,12 @@ export default {
     border: 1px solid black;
     margin-bottom: 5px;
     width: 25%;
+  }
+
+  .error {
+    color: #ff0062;
+    margin-top: 10px;
+    font-size: 0.8em;
+    font-weight: bold;
   }
 </style>
