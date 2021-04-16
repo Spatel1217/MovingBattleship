@@ -22,8 +22,12 @@ export default {
   },
   methods: {
     registerCommand() { //logic for checking commands for validity should also go here
-      this.previousCommands.push(this.currentCommand)
-      this.currentCommand = ''
+      if (this.currentCommand === "fire a4") {
+        this.previousCommands.push(this.currentCommand)
+        this.currentCommand = ''
+      } else {
+        this.inputError = this.currentCommand + ' is not a valid move'
+      }
     }
   }
 }
