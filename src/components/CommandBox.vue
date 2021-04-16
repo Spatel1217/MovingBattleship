@@ -22,7 +22,12 @@ export default {
   },
   methods: {
     registerCommand() { //logic for checking commands for validity should also go here
-      this.previousCommands.push(this.currentCommand)
+      const splits = this.currentCommand.split(' ')
+      if (splits[0] === "fire") {
+        this.previousCommands.push('FIRING ' + this.currentCommand)
+      } else {
+        this.previousCommands.push('Didn\'t recognize command')
+      }
       this.currentCommand = ''
     }
   }
