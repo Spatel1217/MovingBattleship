@@ -33,11 +33,11 @@ export default {
     }
   },
   methods: {
-    clickSquare: function(event) {
-      alert("Clicked " + event.target)
+    clickSquare: function (event) {
+      alert("Clicked (" + event.target.dataset.x + ", " + event.target.dataset.y + ")")
     },
     onResize() {
-      var target = { x: 500, y: 215, width: 475, height: 475 };
+      var target = {x: 500, y: 215, width: 475, height: 475};
       var windowWidth = $(window).width();
       var windowHeight = $(window).height();
 
@@ -82,6 +82,7 @@ export default {
   &:hover {
     cursor: pointer;
   }
+
   .frame {
     position: absolute;
     display: block;
