@@ -21,11 +21,7 @@ export default {
   },
   methods: {
     onResize() {
-      if (window.innerWidth > 1100) {
-        this.display = false;
-      } else {
-        this.display = true;
-      }
+      this.display = (window.innerWidth > 1100);
     }
   },
   created() {
