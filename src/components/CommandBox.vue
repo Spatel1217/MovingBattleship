@@ -12,6 +12,7 @@
 </template>
 
 <script>
+
 export default {
   data() {
     return {
@@ -22,12 +23,19 @@ export default {
   },
   methods: {
     registerCommand() { //logic for checking commands for validity should also go here
-      if (this.currentCommand === "fire a4") {
-        this.previousCommands.push(this.currentCommand)
-        this.currentCommand = ''
+      this.previousCommands.push(this.currentCommand)
+      //^(fire) ([a-j]|[A-J])([1-9]|10)$ <- regex to match fire commands
+      const regExp = /^(fire) ([a-j]|[A-J])([1-9]|10)$/ig
+      const matches = regExp.exec(this.currentCommand)
+      this.previousCommands.push(matches)
+      if (matches[1].toLowerCase() === "fire") {
+        const letter = matches[2]
+        const number = matches[3]
+        this.previousCommands.push('FIRING ' + letter + number)
       } else {
-        this.inputError = this.currentCommand + ' is not a valid move'
+        this.previousCommands.push('Didn\'t recognize command')
       }
+      this.currentCommand = ''
     }
   }
 }
