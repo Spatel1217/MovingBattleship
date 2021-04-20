@@ -46,6 +46,7 @@ export default {
     clickSquare: function (event) {
       // alert("Clicked (" + event.target.dataset.x + ", " + event.target.dataset.y + ")")
       event.target.innerHTML = "X"
+      event.target.style.backgroundColor = "lightblue"
       this.setValue(event);
     },
     // setValue: function (event) {
@@ -119,6 +120,15 @@ export default {
   width: 10% - 1px;
   border: 1px solid black;
   height: 100%;
+  background-color: white;
+
+  // From https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 
   &.hit{
 
