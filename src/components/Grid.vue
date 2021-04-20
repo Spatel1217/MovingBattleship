@@ -16,26 +16,41 @@
             // placed: playerMap.boatMap[n - 1][m - 1],
             // koClick: !playerMap.okClick
           }"
-      ></div>
+      >
+        <span> {{ value }} </span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import $ from "jquery";
+import { ref } from 'vue'
 
 export default {
   data() {
+    const mark = ref("");
+
     return {
       currentCommand: '',
       previousCommands: [],
-      inputError: ''
+      inputError: '',
+      mark,
+
+      nested: {
+        mark
+      }
     }
   },
   methods: {
     clickSquare: function (event) {
-      alert("Clicked (" + event.target.dataset.x + ", " + event.target.dataset.y + ")")
+      // alert("Clicked (" + event.target.dataset.x + ", " + event.target.dataset.y + ")")
+      event.target.innerHTML = "X"
+      this.setValue(event);
     },
+    // setValue: function (event) {
+    //
+    // },
     onResize() {
       var target = {x: 500, y: 215, width: 475, height: 475};
       var windowWidth = $(window).width();
@@ -104,5 +119,9 @@ export default {
   width: 10% - 1px;
   border: 1px solid black;
   height: 100%;
+
+  &.hit{
+
+  }
 }
 </style>
