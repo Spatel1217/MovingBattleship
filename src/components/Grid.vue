@@ -93,7 +93,7 @@ export default {
 
 .canvas {
   //transform: rotate(-6deg);
-  position: absolute;
+  position: relative;
   //border: 1px solid black;
   &:hover {
     cursor: pointer;

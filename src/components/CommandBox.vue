@@ -17,10 +17,12 @@ export default {
     return {
       currentCommand: '',
       previousCommands: [],
+      lastCommand: '',
     }
   },
   methods: {
     registerCommand() { //logic for checking commands for validity should also go here
+      this.previousCommands.push(this.lastCommand)
       this.previousCommands.push(this.currentCommand)
       //^(fire) ([a-j]|[A-J])([1-9]|10)$ <- regex to match fire commands
       const regExp = /^(fire) ([a-j]|[A-J])([1-9]|10)$/ig
@@ -34,9 +36,9 @@ export default {
       } else {
         this.previousCommands.push('Didn\'t recognize command')
       }
-      this.previousCommands.push("goodbye")
+      this.lastCommand.push("goodbye")
       this.currentCommand = ''
-
+      this.autoScroll()
     },
     // var scrolled = false;
     autoScroll() {
@@ -44,7 +46,7 @@ export default {
       var scrollHeight = container.scrollHeight;
       // var container = this.getElementById('scroll').lastItem
       container.scrollTop = scrollHeight;
-      // this.getElementById('scroll').scrollHeight = this.previousCommands.lastItem.offsetHeight + this.previousCommands.lastItem.offsetHeight
+      this.getElementsByClassName('scroll').scrollHeight = this.lastCommand.offsetHeight + this.lastCommand.offsetHeight
     },
     mounted() {
       this.autoScroll();
@@ -59,7 +61,7 @@ export default {
 <style scoped>
 input {
   display: block;
-  padding: 10px 6px;
+  padding: 5px 6px;
   box-sizing: border-box;
   border: 3px solid #151513;
   width: 100%;
@@ -88,7 +90,7 @@ input {
   border-radius: 5px;
   height: 20%;
   width: 70%;
-  margin-top: 35%;
+  margin-top: 10%;
   margin-right: 15%;
   margin-left: 15%;
 }
