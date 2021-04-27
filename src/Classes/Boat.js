@@ -2,7 +2,7 @@ export class Boat {
     id = 0;
     size = 0;
     hitpoints = 0;
-    position; //not sure how we are going to store position. will we use coordinates within the code? and only use the a-j 0-9 system for user input?
+    position = []; //not sure how we are going to store position. will we use coordinates within the code? and only use the a-j 0-9 system for user input?
     placed = false;
     horizontal = true;
     selected = false;
