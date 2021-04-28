@@ -25,20 +25,20 @@ export default {
       this.previousCommands.push(this.lastCommand)
       this.previousCommands.push(this.currentCommand)
       //^(fire) ([a-j]|[A-J])([1-9]|10)$ <- regex to match fire commands
+      //^(move) (ship[1-5]) (up|down|left|right) ([1-9])$
       const regExp = /^(fire) ([a-j]|[A-J])([1-9]|10)$/ig
       const matches = regExp.exec(this.currentCommand) //check what returns from exec when it fails
       this.previousCommands.push(matches)
-      if (matches.length > 0 && matches[1].toLowerCase() === "fire") {
-        this.previousCommands.push("hello")
+      if (matches != null && matches[1].toLowerCase() === "fire") {
         const letter = matches[2]
         const number = matches[3]
         this.previousCommands.push('FIRING ' + letter + number)
       } else {
-        this.previousCommands.push('Didn\'t recognize command')
+        this.previousCommands.push('Didn\'t recognize command: ' +this.currentCommand)
       }
-      this.lastCommand.push("goodbye")
       this.currentCommand = ''
       this.autoScroll()
+      this.currentCommand = ''
     },
     // var scrolled = false;
     autoScroll() {

@@ -25,7 +25,7 @@
 
 <script>
 import $ from "jquery";
-import { ref } from 'vue'
+import {ref} from 'vue'
 
 export default {
   data() {
@@ -130,7 +130,7 @@ export default {
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 
-  &.hit{
+  &.hit {
 
   }
 }
