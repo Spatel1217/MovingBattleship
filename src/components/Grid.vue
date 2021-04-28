@@ -47,7 +47,7 @@ export default {
       // alert("Clicked (" + event.target.dataset.x + ", " + event.target.dataset.y + ")")
       event.target.innerHTML = "X"
       event.target.style.backgroundColor = "lightblue"
-      this.setValue(event);
+      // this.setValue(event);
     },
     // setValue: function (event) {
     //
@@ -84,6 +84,26 @@ export default {
   mounted() {
     window.addEventListener("resize", this.onResize);
     window.dispatchEvent(new Event("resize"));
+    const io = require("socket.io-client");
+    console.log('connecting...');
+    const socket = io.connect("http://localhost:3000");
+
+    //Example move send to server
+    socket.emit('actuate', { command: 'a5' });
+
+    //Listen for server-given player number
+    socket.on('player-number', (playerNumber) => {
+      if(playerNumber == 1) {
+        console.log('Connected P1');
+      } else if(playerNumber == 2) {
+        console.log('Connected P2');
+      }
+    });
+
+    //listen for server broadcasted moves
+    socket.on('move', (move) => {
+      console.log('P' + move.playerIndex + ': ' + move.command);
+    });
   }
 }
 </script>
