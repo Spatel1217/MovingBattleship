@@ -25,21 +25,14 @@
 
 <script>
 import $ from "jquery";
-import {ref} from 'vue'
+// import {BoatGroup} from "@/classes/BoatGroup";
 
 export default {
   data() {
-    const mark = ref("");
 
     return {
-      currentCommand: '',
-      previousCommands: [],
-      inputError: '',
-      mark,
-
-      nested: {
-        mark
-      }
+      // boats: BoatGroup,
+      hitMap: []
     }
   },
   methods: {
@@ -103,6 +96,12 @@ export default {
     //listen for server broadcasted moves
     socket.on('move', (move) => {
       console.log('P' + move.playerIndex + ': ' + move.command);
+    });
+
+    socket.on('board-change', (boardState) => {
+      // this.boats = boardState.boatGroup;
+      this.hitMap = boardState.hitMap;
+      console.log('received board change '+ boardState);
     });
   }
 }

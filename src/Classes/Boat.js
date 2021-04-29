@@ -1,15 +1,19 @@
-export class Boat {
+export default class Boat {
     id = 0;
     size = 0;
     hitpoints = 0;
-    position = []; //not sure how we are going to store position. will we use coordinates within the code? and only use the a-j 0-9 system for user input?
+    x = 0;
+    y = 0;
+    // position = []; //not sure how we are going to store position. will we use coordinates within the code? and only use the a-j 0-9 system for user input?
     placed = false;
     horizontal = true;
     selected = false;
     active = true;
     destroyed = false;
 
-    constructor(size, id) {
+    constructor(x, y, size, id) {
+        this.x = x;
+        this.y = y;
         this.id = id;
         this.size = size;
         this.hitpoints = size; //segments of the ship equal hitpoints as in regular battleship
@@ -35,5 +39,4 @@ export class Boat {
             this.destroyed = true;
         }
     }
-
 }
