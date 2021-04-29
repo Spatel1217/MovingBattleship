@@ -98,4 +98,31 @@ export class Board {
             boatGroup.selectBoat(null);
         }
     }
+
+    removeBoat(boat, boatGroup) {
+        var _this = this;
+
+        boat.position.forEach(function(coord) {
+            _this.boatMap[coord[1]].splice(coord[0], 1, false);
+        });
+
+        boat.position = [];
+        boat.enable();
+        boat.placed = false;
+        boatGroup.selectBoat(boat);
+    }
+
+    _resetMap() {
+        var array = [];
+        for (let i = 0; i < this.height; i++) {
+            var line = [];
+
+            for (let j = 0; j < this.width; i++) {
+                line[j] = false;
+            }
+            array[i] = line;
+        }
+
+        return array;
+    }
 }
