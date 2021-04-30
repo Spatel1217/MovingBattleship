@@ -30,10 +30,7 @@ let hitMap = Array.from({ length: 10}, () =>
 
 // Handle a socket connection request from web client
 io.on('connection', (socket) => {
-    //reset hitMap
-    hitMap = Array.from({ length: 10}, () =>
-        Array.from({length: 10}, () => false)
-    );
+    io.emit('board-change', {hitMap});
 
     let playerIndex = -1;
     for (const i in connections) {
