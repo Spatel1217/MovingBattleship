@@ -79,7 +79,7 @@ export default {
 
     const io = require("socket.io-client")
     console.log('connecting...')
-    const local = true
+    const local = false
     const socket = local ? io.connect("http://localhost:3000") : io.connect("https://safe-journey-82755.herokuapp.com")
     this.resetBoard()
     //Listen for server-given player number
