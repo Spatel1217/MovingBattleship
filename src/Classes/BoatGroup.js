@@ -1,4 +1,4 @@
-import { Boat } from "@/Classes/Boat.js"
+import Boat from "@/classes/Boat";
 
 export class BoatGroup {
     size = 5;
@@ -21,9 +21,20 @@ export class BoatGroup {
         }
     }
 
+    //Setup 5 boats with fixed sizes and random starting positions and orientations
     _addBoats() {
         for (let i = 1; i <= this.size; i++) {
             this.boats.push(new Boat(i+1,i))
         }
     }
+
+    addBoat(boat) {
+        this.boats.push(boat);
+    }
+
+    getBoats() {
+        return this.boats;
+    }
 }
+
+module.exports = BoatGroup
