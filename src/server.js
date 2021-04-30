@@ -12,7 +12,9 @@ console.log("----------------->", Boat);
 const app = express();
 const server = http.Server(app);
 
+// eslint-disable-next-line no-unused-vars
 var boatGroup = new BoatGroup()
+// eslint-disable-next-line no-unused-vars
 var boat = new Boat(3,3,4,0);
 // boatGroup.addBoat(boat);
 
