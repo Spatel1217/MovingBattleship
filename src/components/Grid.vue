@@ -12,12 +12,12 @@
           :key="m"
           @click="clickSquare"
           v-bind:class="{
-            // hovered: playerMap.hoverMap[n - 1][m - 1],
-            // placed: playerMap.boatMap[n - 1][m - 1],
-            // koClick: !playerMap.okClick
+            // placed: boatMap[n - 1][m - 1],
+            hit: hitMap[m - 1][n - 1]
+            // missed: enemyMap.hitMap[n - 1][m - 1] == 'missed',
+            // destroyed: isDestroyed(n, m)
           }"
       >
-        <span> {{ value }} </span>
       </div>
     </div>
   </div>
@@ -25,14 +25,13 @@
 
 <script>
 import $ from "jquery";
-// import {BoatGroup} from "@/classes/BoatGroup";
 
 export default {
   data() {
-
     return {
-      // boats: BoatGroup,
-      hitMap: []
+      hitMap: Array.from({ length: 10}, () =>
+          Array.from({length: 10}, () => false)
+      )
     }
   },
   methods: {
@@ -40,11 +39,7 @@ export default {
       // alert("Clicked (" + event.target.dataset.x + ", " + event.target.dataset.y + ")")
       event.target.innerHTML = "X"
       event.target.style.backgroundColor = "lightblue"
-      // this.setValue(event);
     },
-    // setValue: function (event) {
-    //
-    // },
     onResize() {
       var target = {x: 500, y: 215, width: 475, height: 475};
       var windowWidth = $(window).width();
@@ -81,9 +76,6 @@ export default {
     console.log('connecting...');
     const socket = io.connect("http://localhost:3000");
 
-    //Example move send to server
-    socket.emit('actuate', { command: 'a5' });
-
     //Listen for server-given player number
     socket.on('player-number', (playerNumber) => {
       if(playerNumber == 1) {
@@ -91,6 +83,11 @@ export default {
       } else if(playerNumber == 2) {
         console.log('Connected P2');
       }
+    });
+
+    this.emitter.on('send command', (data) => {
+      console.log('sending command: ' + data.command)
+      socket.emit('actuate', data)
     });
 
     //listen for server broadcasted moves
@@ -101,7 +98,7 @@ export default {
     socket.on('board-change', (boardState) => {
       // this.boats = boardState.boatGroup;
       this.hitMap = boardState.hitMap;
-      console.log('received board change '+ boardState);
+      console.log(boardState)
     });
   }
 }
@@ -139,7 +136,6 @@ export default {
   width: 10% - 1px;
   border: 1px solid black;
   height: 100%;
-  background-color: white;
 
   // From https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting
   -webkit-touch-callout: none; /* iOS Safari */
@@ -149,8 +145,16 @@ export default {
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 
-  &.hit {
+  &.placed {
+    background-color: lightblue;
+  }
 
+  &.hit {
+    background-color: lightcoral;
+
+    //&.destroyed {
+    //background-color: firebrick;
+    //}
   }
 }
 </style>

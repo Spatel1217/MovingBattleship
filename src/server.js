@@ -10,7 +10,9 @@ const server = http.Server(app);
 // var boat = new Boat(3,3,4,0);
 // boatGroup.addBoat(boat);
 
-var hitMap = [];
+let hitMap = Array.from({ length: 10}, () =>
+    Array.from({length: 10}, () => false)
+);
 
 const io = require("socket.io")(server, {
     cors: {
@@ -28,7 +30,6 @@ const connections = [null, null];
 
 // Handle a socket connection request from web client
 io.on('connection', function (socket) {
-
     let playerIndex = -1;
     for (const i in connections) {
         if (connections[i] === null) {
@@ -44,7 +45,17 @@ io.on('connection', function (socket) {
     socket.on('actuate', function (data) {
         console.log(`Actuation from ${playerIndex}`);
 
-        const {command} = data; // Get grid and metadata properties from client
+        const {command, target, id } = data;
+        let targetx = parseInt(target.charCodeAt(0)-97)
+        let targety = parseInt(target.substring(1))-1
+        if (command == 'fire') {
+            console.log('fired ' + targetx +','+ targety)
+            hitMap[targetx][targety]=true
+        } else if (command == 'move') {
+            // do something like this:
+            // boats.get(id).move([targetx, targety])
+            console.log(id)
+        }
 
         const move = {
             playerIndex,
@@ -52,10 +63,10 @@ io.on('connection', function (socket) {
         };
 
         // Emit the move to all other clients
-        // socket.broadcast.emit('move', move);
         io.emit('move', move);
         io.emit('board-change', {hitMap});
     });
+
     socket.on('disconnect', function () {
         console.log(`Player ${playerIndex} Disconnected`);
         connections[playerIndex] = null;
