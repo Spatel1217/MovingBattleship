@@ -40,6 +40,10 @@ export default {
       event.target.innerHTML = "X"
       event.target.style.backgroundColor = "lightblue"
     },
+    resetBoard() {
+      this.hitMap = Array.from({ length: 10}, () =>
+          Array.from({length: 10}, () => false))
+    },
     onResize() {
       var target = {x: 500, y: 215, width: 475, height: 475};
       var windowWidth = $(window).width();
@@ -70,36 +74,43 @@ export default {
     }
   },
   mounted() {
-    window.addEventListener("resize", this.onResize);
-    window.dispatchEvent(new Event("resize"));
-    const io = require("socket.io-client");
-    console.log('connecting...');
-    const socket = io.connect("http://localhost:3000");
+    window.addEventListener("resize", this.onResize)
+    window.dispatchEvent(new Event("resize"))
 
+    const io = require("socket.io-client")
+    console.log('connecting...')
+    const local = true
+    const socket = local ? io.connect("http://localhost:3000") : io.connect("https://safe-journey-82755.herokuapp.com")
+    this.resetBoard()
     //Listen for server-given player number
     socket.on('player-number', (playerNumber) => {
       if(playerNumber == 1) {
-        console.log('Connected P1');
+        console.log('Connected P1')
       } else if(playerNumber == 2) {
-        console.log('Connected P2');
+        console.log('Connected P2')
       }
-    });
+    })
 
     this.emitter.on('send command', (data) => {
       console.log('sending command: ' + data.command)
       socket.emit('actuate', data)
-    });
+    })
+
+    this.emitter.on('reset', () => {
+      console.log('resetting')
+      socket.emit('reset-board')
+    })
 
     //listen for server broadcasted moves
     socket.on('move', (move) => {
-      console.log('P' + move.playerIndex + ': ' + move.command);
-    });
+      console.log('P' + move.playerIndex + ': ' + move.command)
+    })
 
     socket.on('board-change', (boardState) => {
       // this.boats = boardState.boatGroup;
-      this.hitMap = boardState.hitMap;
+      this.hitMap = boardState.hitMap
       console.log(boardState)
-    });
+    })
   }
 }
 </script>
@@ -136,6 +147,7 @@ export default {
   width: 10% - 1px;
   border: 1px solid black;
   height: 100%;
+  background-color: white;
 
   // From https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting
   -webkit-touch-callout: none; /* iOS Safari */

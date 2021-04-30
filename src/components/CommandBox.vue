@@ -32,8 +32,10 @@ export default {
       if (matches != null && matches[1].toLowerCase() === "fire") {
         const letter = matches[2]
         const number = matches[3]
-        this.emitter.emit('send command', {command: 'fire', target: letter + number })
+        this.emitter.emit('send command', {command: 'fire', target: letter + number})
         this.previousCommands.push('FIRING ' + letter + number)
+      } else if(this.currentCommand === 'reset'){
+        this.emitter.emit('reset')
       } else {
         this.previousCommands.push('Didn\'t recognize command: ' +this.currentCommand)
       }
