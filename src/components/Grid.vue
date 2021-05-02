@@ -12,12 +12,12 @@
           :key="m"
           @click="clickSquare"
           v-bind:class="{
-            // hovered: playerMap.hoverMap[n - 1][m - 1],
-            // placed: playerMap.boatMap[n - 1][m - 1],
-            // koClick: !playerMap.okClick
+            // placed: boatMap[n - 1][m - 1],
+            hit: hitMap[m - 1][n - 1]
+            // missed: enemyMap.hitMap[n - 1][m - 1] == 'missed',
+            // destroyed: isDestroyed(n, m)
           }"
       >
-        <span> {{ value }} </span>
       </div>
     </div>
   </div>
@@ -25,14 +25,13 @@
 
 <script>
 import $ from "jquery";
-// import {BoatGroup} from "@/classes/BoatGroup";
 
 export default {
   data() {
-
     return {
-      // boats: BoatGroup,
-      hitMap: []
+      hitMap: Array.from({ length: 10}, () =>
+          Array.from({length: 10}, () => false)
+      )
     }
   },
   methods: {
@@ -40,11 +39,11 @@ export default {
       // alert("Clicked (" + event.target.dataset.x + ", " + event.target.dataset.y + ")")
       event.target.innerHTML = "X"
       event.target.style.backgroundColor = "lightblue"
-      // this.setValue(event);
     },
-    // setValue: function (event) {
-    //
-    // },
+    resetBoard() {
+      this.hitMap = Array.from({ length: 10}, () =>
+          Array.from({length: 10}, () => false))
+    },
     onResize() {
       var target = {x: 500, y: 215, width: 475, height: 475};
       var windowWidth = $(window).width();
@@ -75,34 +74,43 @@ export default {
     }
   },
   mounted() {
-    window.addEventListener("resize", this.onResize);
-    window.dispatchEvent(new Event("resize"));
-    const io = require("socket.io-client");
-    console.log('connecting...');
-    const socket = io.connect("http://localhost:3000");
+    window.addEventListener("resize", this.onResize)
+    window.dispatchEvent(new Event("resize"))
 
-    //Example move send to server
-    socket.emit('actuate', { command: 'a5' });
-
+    const io = require("socket.io-client")
+    console.log('connecting...')
+    const local = false
+    const socket = local ? io.connect("http://localhost:3000") : io.connect("https://safe-journey-82755.herokuapp.com")
+    this.resetBoard()
     //Listen for server-given player number
     socket.on('player-number', (playerNumber) => {
       if(playerNumber == 1) {
-        console.log('Connected P1');
+        console.log('Connected P1')
       } else if(playerNumber == 2) {
-        console.log('Connected P2');
+        console.log('Connected P2')
       }
-    });
+    })
+
+    this.emitter.on('send command', (data) => {
+      console.log('sending command: ' + data.command)
+      socket.emit('actuate', data)
+    })
+
+    this.emitter.on('reset', () => {
+      console.log('resetting')
+      socket.emit('reset-board')
+    })
 
     //listen for server broadcasted moves
     socket.on('move', (move) => {
-      console.log('P' + move.playerIndex + ': ' + move.command);
-    });
+      console.log('P' + move.playerIndex + ': ' + move.command)
+    })
 
     socket.on('board-change', (boardState) => {
       // this.boats = boardState.boatGroup;
-      this.hitMap = boardState.hitMap;
-      console.log('received board change '+ boardState);
-    });
+      this.hitMap = boardState.hitMap
+      console.log(boardState)
+    })
   }
 }
 </script>
@@ -149,8 +157,16 @@ export default {
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 
-  &.hit {
+  &.placed {
+    background-color: lightblue;
+  }
 
+  &.hit {
+    background-color: lightcoral;
+
+    //&.destroyed {
+    //background-color: firebrick;
+    //}
   }
 }
 </style>
