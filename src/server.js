@@ -1,13 +1,21 @@
 //Adapted from index.js in Competitive 2048 Demo
+
+
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
+const BoatGroup = require("./classes/BoatGroup");
+const Boat = require("./classes/Boat");
+console.log("----------------->", BoatGroup);
+console.log("----------------->", Boat);
 
 const app = express();
 const server = http.Server(app);
 
-// var boatGroup = new BoatGroup()
-// var boat = new Boat(3,3,4,0);
+// eslint-disable-next-line no-unused-vars
+let boatGroup = new BoatGroup()
+// eslint-disable-next-line no-unused-vars
+let boat = new Boat(3,3,4,0);
 // boatGroup.addBoat(boat);
 
 const io = require("socket.io")(server, {
