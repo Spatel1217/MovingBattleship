@@ -56,8 +56,28 @@ io.on('connection', function (socket) {
         io.emit('move', move);
         io.emit('board-change', {hitMap});
     });
+    socket.on('fire', function(data) {
+        //^(fire) ([a-j]|[A-J])([1-9]|10)$ <- regex to match fire commands
+        //^(move) (ship[1-5]) (up|down|left|right) ([1-9])$
+        const regExp = /^(fire) ([a-j]|[A-J])([1-9]|10)$/ig
+        const matches = regExp.exec(data) //will this work with no explicit type call??
+        // this.previousCommands.push(matches) //for debugging matches
+        if (matches != null && matches[1].toLowerCase() === "fire") {
+            const letter = matches[2]
+            const number = matches[3]
+            // this.previousCommands.push('FIRING ' + letter + number)
+            io.emit('firing', {letter: letter, number: number})
+        } else {
+            // this.previousCommands.push('Didn\'t recognize command: ' +this.currentCommand)
+            io.emit('fire error', data)
+        }
+        // this.currentCommand = ''
+        // this.autoScroll()
+    });
     socket.on('disconnect', function () {
         console.log(`Player ${playerIndex} Disconnected`);
         connections[playerIndex] = null;
     });
+
+
 });
