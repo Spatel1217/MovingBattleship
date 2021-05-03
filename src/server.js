@@ -58,24 +58,31 @@ io.on('connection', (socket) => {
     socket.on('actuate', (data) => {
         console.log(`Actuation from ${playerIndex}`);
 
-        const {command, target, id } = data;
-        let targetx = parseInt(target.charCodeAt(0)-97)
-        let targety = parseInt(target.substring(1))-1
-        if (command === 'fire') {
+        //change this to fit string verification
+        const {command} = data;
+
+        const regExp = /^(fire) ([a-j]|[A-J])([1-9]|10)$/ig
+        const matches = regExp.exec(command)
+
+        if (matches != null && matches[1].toLowerCase() === "fire") {
+            const letter = matches[2]
+            let targetx = letter.charCodeAt(0)-97 // translate A-J to numerical grid position
+            const number = matches[3]
+            let targety = number-1
+            //send something back to commandbox to push the FIRING
             console.log('fired ' + targetx +','+ targety)
             hitMap[targetx][targety]=true
-        } else if (command === 'move') {
-            // do something like this:
-            // boats.get(id).move([targetx, targety])
-            console.log(id)
+        } else {
+            //send something back to commandbox to push DIDNT RECOGNIZE
         }
+
 
         const move = {
             playerIndex,
             command,
         };
 
-        // Emit the move to all other clients
+        // Emit the player action to all other clients
         io.emit('move', move);
         io.emit('board-change', {hitMap});
     });

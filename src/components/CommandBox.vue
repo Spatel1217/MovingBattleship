@@ -22,26 +22,39 @@ export default {
   },
   methods: {
     registerCommand() { //logic for checking commands for validity should also go here
-      this.previousCommands.push(this.lastCommand)
+      this.previousCommands.push(this.lastCommand) //double check what is this?? why is it being pushed
       this.previousCommands.push(this.currentCommand)
+      /* this is blocked out to test server-side verification
       //^(fire) ([a-j]|[A-J])([1-9]|10)$ <- regex to match fire commands
       //^(move) (ship[1-5]) (up|down|left|right) ([1-9])$
       const regExp = /^(fire) ([a-j]|[A-J])([1-9]|10)$/ig
-      const matches = regExp.exec(this.currentCommand) //check what returns from exec when it fails
-      this.previousCommands.push(matches)
+      const matches = regExp.exec(this.currentCommand)
+      this.previousCommands.push(matches) //for debugging matches
       if (matches != null && matches[1].toLowerCase() === "fire") {
         const letter = matches[2]
         const number = matches[3]
-        this.emitter.emit('send command', {command: 'fire', target: letter + number})
         this.previousCommands.push('FIRING ' + letter + number)
-      } else if(this.currentCommand === 'reset'){
-        this.emitter.emit('reset')
       } else {
         this.previousCommands.push('Didn\'t recognize command: ' +this.currentCommand)
       }
       this.currentCommand = ''
-      // this.autoScroll()
-      // this.currentCommand = ''
+      this.autoScroll()
+      */
+
+      this.emitter.emit('send command', {command: this.currentCommand})
+
+      //this is for testing
+      if(this.currentCommand === 'reset') {
+        this.emitter.emit('reset')
+      }
+
+      /*
+      socket.on('firing', (letter, number) => { //how do i get the socket in here??
+        this.previousCommands.push('FIRING AT' + letter + number)
+      })
+      socket.on('fire error', () => {
+        this.previousCommands.push('Didn\'t recognize command: ' +this.currentCommand)
+      }) */
     },
     // var scrolled = false;
     autoScroll() {
