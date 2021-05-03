@@ -41,12 +41,20 @@ export default {
       this.autoScroll()
       */
 
+      this.emitter.emit('send command', {command: this.currentCommand})
+
+      //this is for testing
+      if(this.currentCommand === 'reset') {
+        this.emitter.emit('reset')
+      }
+
+      /*
       socket.on('firing', (letter, number) => { //how do i get the socket in here??
         this.previousCommands.push('FIRING AT' + letter + number)
       })
       socket.on('fire error', () => {
         this.previousCommands.push('Didn\'t recognize command: ' +this.currentCommand)
-      })
+      }) */
     },
     // var scrolled = false;
     autoScroll() {
