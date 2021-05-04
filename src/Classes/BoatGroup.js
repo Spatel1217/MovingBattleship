@@ -1,6 +1,6 @@
-import Boat from "@/classes/Boat";
+const Boat = require("./Boat");
 
-export class BoatGroup {
+class BoatGroup {
     size = 5;
     placedBoats = 0;
     selectedBoat = null;

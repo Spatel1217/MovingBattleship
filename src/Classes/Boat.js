@@ -1,4 +1,5 @@
-export default class Boat {
+
+class Boat {
     id = 0;
     size = 0;
     hitpoints = 0;
@@ -40,3 +41,5 @@ export default class Boat {
         }
     }
 }
+
+module.exports = Boat

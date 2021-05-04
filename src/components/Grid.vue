@@ -3,6 +3,12 @@
 <template>
   <div class="canvas">
     <div class="frame"></div>
+    <div class="line">
+      <div class="columnLabels" v-for="j in 10" :key="j">
+        {{j}}
+      </div>
+    </div>
+<!--    <RowLabel/>-->
     <div class="line" v-for="n in 10" :key="n">
       <div
           class="square"
@@ -25,13 +31,15 @@
 
 <script>
 import $ from "jquery";
+// import RowLabel from "./RowLabel";
 
 export default {
+  // components: {RowLabel},
   data() {
     return {
       hitMap: Array.from({ length: 10}, () =>
           Array.from({length: 10}, () => false)
-      )
+      ),
     }
   },
   methods: {
@@ -71,8 +79,12 @@ export default {
       $(".canvas").css("width", target.width * scale);
       $(".canvas").css("height", target.height * scale);
       $(".line").css("height", (target.height * scale) / 10);
+    },
+    labelRows(i) {
+      String.fromCharCode(65+i)
     }
   },
+
   mounted() {
     window.addEventListener("resize", this.onResize)
     window.dispatchEvent(new Event("resize"))
@@ -176,4 +188,16 @@ export default {
     //}
   }
 }
+
+.columnLabels{
+  float:left;
+  width: 10% - 0.5px;
+  //margin-left: 2.8%;
+  text-align:center;
+  //margin-right: 2.5%;
+  //border: solid black 0.1px;
+  padding-top: 10px;
+
+}
+
 </style>
