@@ -7,7 +7,7 @@
 
 <script>
 export default {
-name: "ColumnLabel",
+name: "RowLabel",
 }
 </script>
 

@@ -3,10 +3,12 @@
 <template>
   <div class="canvas">
     <div class="frame"></div>
-    <div class="rowLabels" v-for="j in 10" :key="j" style="width: 100px">
-      {{j}}
+    <div class="line">
+      <div class="columnLabels" v-for="j in 10" :key="j">
+        {{j}}
+      </div>
     </div>
-<!--    <ColumnLabel/>-->
+<!--    <RowLabel/>-->
     <div class="line" v-for="n in 10" :key="n">
       <div
           class="square"
@@ -29,10 +31,10 @@
 
 <script>
 import $ from "jquery";
-// import ColumnLabel from "./ColumnLabel";
+// import RowLabel from "./RowLabel";
 
 export default {
-  // components: {ColumnLabel},
+  // components: {RowLabel},
   data() {
     return {
       hitMap: Array.from({ length: 10}, () =>
@@ -180,12 +182,15 @@ export default {
   }
 }
 
-.rowLabels{
-  display:inline;
-  margin-left: 2.8%;
+.columnLabels{
+  float:left;
+  width: 10% - 0.5px;
+  //margin-left: 2.8%;
   text-align:center;
-  margin-right: 2.5%;
-  padding: 3px;
+  //margin-right: 2.5%;
+  //border: solid black 0.1px;
+  padding-top: 10px;
+
 }
 
 </style>
