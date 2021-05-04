@@ -1,6 +1,5 @@
-import {BoatGroup} from "./BoatGroup";
 
-export default class Boat {
+class Boat {
     id = 0;
     size = 0;
     hitpoints = 0;
