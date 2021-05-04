@@ -1,3 +1,5 @@
+import {BoatGroup} from "./BoatGroup";
+
 export default class Boat {
     id = 0;
     size = 0;
@@ -40,3 +42,5 @@ export default class Boat {
         }
     }
 }
+
+module.exports = Boat
