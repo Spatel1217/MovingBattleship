@@ -43,18 +43,18 @@ export default {
 
       this.emitter.emit('send command', {command: this.currentCommand})
 
+      this.emitter.on('fire confirm', (data) => {
+        this.previousCommands.push('FIRING ' + letter + number)
+      })
+
+      this.emitter.on('fire failure', (data) => {
+        this.previousCommands.push('Didn\'t recognize command: ' +this.currentCommand)
+      })
+
       //this is for testing
       if(this.currentCommand === 'reset') {
         this.emitter.emit('reset')
       }
-
-      /*
-      socket.on('firing', (letter, number) => { //how do i get the socket in here??
-        this.previousCommands.push('FIRING AT' + letter + number)
-      })
-      socket.on('fire error', () => {
-        this.previousCommands.push('Didn\'t recognize command: ' +this.currentCommand)
-      }) */
     },
     // var scrolled = false;
     autoScroll() {

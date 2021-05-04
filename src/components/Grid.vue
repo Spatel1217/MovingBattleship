@@ -96,6 +96,14 @@ export default {
       socket.emit('actuate', data)
     })
 
+    socket.on('firing', (data) => {
+      this.emitter.emit('fire confirm', ) //how access the data
+    })
+
+    socket.on('fire error', (data) => {
+      this.emitter.emit('fire failure', )
+    })
+
     this.emitter.on('reset', () => {
       console.log('resetting')
       socket.emit('reset-board')
@@ -105,7 +113,6 @@ export default {
     socket.on('move', (move) => {
       console.log('P' + move.playerIndex + ': ' + move.command)
     })
-
     socket.on('board-change', (boardState) => {
       // this.boats = boardState.boatGroup;
       this.hitMap = boardState.hitMap
