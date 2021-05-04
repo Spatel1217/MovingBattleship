@@ -4,12 +4,16 @@
   <div class="canvas">
     <div class="frame"></div>
     <div class="line">
+      <div class="columnLabels"></div>
       <div class="columnLabels" v-for="j in 10" :key="j">
         {{j}}
       </div>
     </div>
 <!--    <RowLabel/>-->
     <div class="line" v-for="n in 10" :key="n">
+      <div class="rowLabels">
+        {{n}}
+      </div>
       <div
           class="square"
           :data-y="n"
@@ -81,7 +85,7 @@ export default {
       $(".line").css("height", (target.height * scale) / 10);
     },
     labelRows(i) {
-      String.fromCharCode(65+i)
+      return String.fromCharCode(65+i)
     }
   },
 
@@ -156,7 +160,7 @@ export default {
 .square {
   float: left;
   // 1 px subtracted from width to account for 1px border
-  width: 10% - 1px;
+  width: 9% - 1px;
   border: 1px solid black;
   height: 100%;
   background-color: white;
@@ -184,13 +188,23 @@ export default {
 
 .columnLabels{
   float:left;
-  width: 10% - 0.5px;
-  //margin-left: 2.8%;
+  width: 9% - 0.5px;
+  margin-bottom: 2.5%;
   text-align:center;
   //margin-right: 2.5%;
   //border: solid black 0.1px;
   padding-top: 10px;
 
+}
+
+.rowLabels {
+  float: left;
+  // 1 px subtracted from width to account for 1px border
+  width: 9% - 0.5px;
+  height: 100%;
+  //background-color: gray;
+  text-align:center;
+  margin-right: 0.5%;
 }
 
 </style>
