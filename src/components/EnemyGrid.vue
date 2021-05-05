@@ -1,5 +1,3 @@
-// Adapted from Ahoy src/components/Placement/Map.vue
-
 <template>
   <div class="canvas">
     <div class="frame"></div>
@@ -36,6 +34,7 @@
 import $ from "jquery";
 
 export default {
+  name: "EnemyGrid",
   data() {
     return {
       hitMap: Array.from({ length: 10}, () =>
@@ -50,11 +49,11 @@ export default {
       event.target.style.backgroundColor = "lightblue"
     },
     resetBoard() {
-      this.hitMap = Array.from({ length: 10}, () =>
+      this.hitMap = Array.from({length: 10}, () =>
           Array.from({length: 10}, () => false))
     },
     onResize() {
-      var target = {x: 250, y: 215, width: 475, height: 475};
+      var target = {x: 300, y: 215, width: 475, height: 475};
       var windowWidth = $(window).width();
       var windowHeight = $(window).height();
 
@@ -85,45 +84,9 @@ export default {
       return String.fromCharCode(64+i)
     }
   },
-
   mounted() {
     window.addEventListener("resize", this.onResize)
     window.dispatchEvent(new Event("resize"))
-
-    const io = require("socket.io-client")
-    console.log('connecting...')
-    const local = true // change to true for shared server state
-    const socket = local ? io.connect("http://localhost:3000") : io.connect("https://safe-journey-82755.herokuapp.com")
-    this.resetBoard()
-    //Listen for server-given player number
-    socket.on('player-number', (playerNumber) => {
-      if(playerNumber == 1) {
-        console.log('Connected P1')
-      } else if(playerNumber == 2) {
-        console.log('Connected P2')
-      }
-    })
-
-    this.emitter.on('send command', (data) => {
-      console.log('sending command: ' + data.command)
-      socket.emit('actuate', data)
-    })
-
-    this.emitter.on('reset', () => {
-      console.log('resetting')
-      socket.emit('reset-board')
-    })
-
-    //listen for server broadcasted moves
-    socket.on('move', (move) => {
-      console.log('P' + move.playerIndex + ': ' + move.command)
-    })
-
-    socket.on('board-change', (boardState) => {
-      // this.boats = boardState.boatGroup;
-      this.hitMap = boardState.hitMap
-      console.log(boardState)
-    })
   }
 }
 </script>
@@ -135,8 +98,8 @@ export default {
   //transform: rotate(-6deg);
   position: relative;
   //flex:1;
-  //float:left;
-  //border: 1px solid black;
+  //float: right;
+  border: 1px solid red;
   &:hover {
     cursor: pointer;
   }

@@ -102,11 +102,11 @@ input {
 /*Encompasses the whole Command Box*/
 .box {
   position: relative;
-  border: 5px double;
+  border: 5px double ;
   border-radius: 5px;
   height: 20%;
   width: 70%;
-  margin-top: 10%;
+  margin-top: 17%;
   margin-right: 15%;
   margin-left: 15%;
 }
