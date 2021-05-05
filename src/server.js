@@ -58,8 +58,10 @@ io.on('connection', (socket) => {
     socket.on('actuate', (data) => {
         console.log(`Actuation from ${playerIndex}`);
 
+        const {command} = data;
+
         const regExp = /^(fire) ([a-j]|[A-J])([1-9]|10)$/ig
-        const matches = regExp.exec(data)
+        const matches = regExp.exec(data.command)
 
         if (matches != null && matches[1].toLowerCase() === "fire") {
             const letter = matches[2]
@@ -67,14 +69,13 @@ io.on('connection', (socket) => {
             const number = matches[3]
             let targety = number-1
             //send something back to commandbox to push the FIRING
-            socket.emit('firing', {target: letter, number})
+            socket.emit('firing', {target: [letter, number]}) //change to handle hit and miss message if/else to emit once
             console.log('fired ' + targetx +','+ targety)
             hitMap[targetx][targety]=true
         } else {
             //send something back to commandbox to push DIDNT RECOGNIZE
             socket.emit('fire error', data)
         }
-
 
         const move = {
             playerIndex,

@@ -17,13 +17,11 @@ export default {
     return {
       currentCommand: '',
       previousCommands: [],
-      lastCommand: '',
+      emitters: false
     }
   },
   methods: {
     registerCommand() { //logic for checking commands for validity should also go here
-      this.previousCommands.push(this.lastCommand) //double check what is this?? why is it being pushed
-      this.previousCommands.push(this.currentCommand)
       /* this is blocked out to test server-side verification
       //^(fire) ([a-j]|[A-J])([1-9]|10)$ <- regex to match fire commands
       //^(move) (ship[1-5]) (up|down|left|right) ([1-9])$
@@ -43,32 +41,42 @@ export default {
 
       this.emitter.emit('send command', {command: this.currentCommand})
 
-      this.emitter.on('fire confirm', (data) => {
-        this.previousCommands.push('FIRING ' + letter + number)
-      })
+      if(!this.emitters) {
+        this.emitters = true
 
-      this.emitter.on('fire failure', (data) => {
-        this.previousCommands.push('Didn\'t recognize command: ' +this.currentCommand)
-      })
+        //listens for fire confirmation
+        this.emitter.on('fire-confirm', (data) => {
+          console.log("fire confirm")
+          this.previousCommands.push('Shot at: ' + data.target[0] + data.target[1])
+        })
+
+        //listen for an error with firing
+        this.emitter.on('fire failure', (data) => {
+          this.previousCommands.push('Didn\'t recognize command: ' +data.command)
+        })
+      }
 
       //this is for testing
       if(this.currentCommand === 'reset') {
         this.emitter.emit('reset')
       }
+
+      this.currentCommand = ''
+      // this.autoScroll()
     },
     // var scrolled = false;
     autoScroll() {
-      var container = this.querySelector("scroll");
-      var scrollHeight = container.scrollHeight;
-      // var container = this.getElementById('scroll').lastItem
-      container.scrollTop = scrollHeight;
-      this.getElementsByClassName('scroll').scrollHeight = this.lastCommand.offsetHeight + this.lastCommand.offsetHeight
+      // var container = this.querySelector("scroll");
+      // var scrollHeight = container.scrollHeight;
+      // // var container = this.getElementById('scroll').lastItem
+      // container.scrollTop = scrollHeight;
+      // this.getElementsByClassName('scroll').scrollHeight = this.lastCommand.offsetHeight + this.lastCommand.offsetHeight
     },
     mounted() {
-      this.autoScroll();
+      // this.autoScroll();
     },
     updated() {
-      this.autoScroll()
+      // this.autoScroll()
     }
   }
 }

@@ -111,11 +111,12 @@ export default {
     })
 
     socket.on('firing', (data) => {
-      this.emitter.emit('fire confirm', ) //how access the data
+      console.log("grid recieved fire")
+      this.emitter.emit('fire-confirm', data) //how access the data
     })
 
     socket.on('fire error', (data) => {
-      this.emitter.emit('fire failure', )
+      this.emitter.emit('fire failure', data)
     })
 
     this.emitter.on('reset', () => {
