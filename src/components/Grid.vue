@@ -9,6 +9,7 @@
         {{labelRows(j)}}
       </div>
     </div>
+<!--    <RowLabel/>-->
     <div class="line" v-for="n in 10" :key="n">
       <div class="rowLabels">
         {{n}}
@@ -188,9 +189,7 @@ export default {
 .columnLabels{
   float:left;
   width: 9% - 0.5px;
-  margin-bottom: 2.5%;
   text-align:center;
-  //margin-right: 2.5%;
   //border: solid black 0.1px;
   padding-top: 10px;
 
@@ -200,10 +199,10 @@ export default {
   float: left;
   // 1 px subtracted from width to account for 1px border
   width: 9% - 0.5px;
-  height: 100%;
-  //background-color: gray;
-  text-align:center;
-  margin-right: 0.5%;
+  height: 50%;
+  text-align: center;
+  padding-top: 2.5%;
+  vertical-align: middle;
 }
 
 </style>
