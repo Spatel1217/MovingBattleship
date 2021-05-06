@@ -39,7 +39,7 @@ export default {
       this.autoScroll()
       */
 
-      this.emitter.emit('send command', {command: this.currentCommand})
+      this.emitter.emit('send-command', {command: this.currentCommand})
 
       if(!this.emitters) {
         this.emitters = true

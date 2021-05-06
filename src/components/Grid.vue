@@ -23,8 +23,8 @@
           @click="clickSquare"
           v-bind:class="{
             // placed: boatMap[n - 1][m - 1],
-            hit: hitMap[m - 1][n - 1]
-            // missed: enemyMap.hitMap[n - 1][m - 1] == 'missed',
+            hit: playerMap[m - 1][n - 1] == 'hit',
+            missed: playerMap[n - 1][m - 1] == 'missed'
             // destroyed: isDestroyed(n, m)
           }"
       >
@@ -39,15 +39,16 @@ import $ from "jquery";
 export default {
   data() {
     return {
-      hitMap: Array.from({ length: 10}, () =>
-          Array.from({length: 10}, () => false)
+      socket: null,
+      playerMap: Array.from({ length: 10}, () =>
+          Array.from({length: 10}, () => '')
       ),
+      playerNumber: 0,
     }
   },
   methods: {
     clickSquare: function (event) {
       // alert("Clicked (" + event.target.dataset.x + ", " + event.target.dataset.y + ")")
-      event.target.innerHTML = "X"
       event.target.style.backgroundColor = "lightblue"
     },
     resetBoard() {
@@ -86,7 +87,6 @@ export default {
       return String.fromCharCode(64+i)
     }
   },
-
   mounted() {
     window.addEventListener("resize", this.onResize)
     window.dispatchEvent(new Event("resize"))
@@ -94,44 +94,45 @@ export default {
     const io = require("socket.io-client")
     console.log('connecting...')
     const local = true // change to true for shared server state
-    const socket = local ? io.connect("http://localhost:3000") : io.connect("https://safe-journey-82755.herokuapp.com")
+    this.socket = local ? io.connect("http://localhost:3000") : io.connect("https://safe-journey-82755.herokuapp.com")
     this.resetBoard()
     //Listen for server-given player number
-    socket.on('player-number', (playerNumber) => {
-      if(playerNumber == 1) {
-        console.log('Connected P1')
-      } else if(playerNumber == 2) {
-        console.log('Connected P2')
-      }
+    this.socket.on('player-number', (playerNumber) => {
+      console.log('P' + playerNumber + ' connected')
+      this.playerNumber = playerNumber
     })
 
-    this.emitter.on('send command', (data) => {
-      console.log('sending command: ' + data.command)
-      socket.emit('actuate', data)
+    this.emitter.on('send-command', (data) => {
+      // console.log('sending command: ' + data.command)
+      this.socket.emit('actuate', data)
     })
 
-    socket.on('firing', (data) => {
-      console.log("grid recieved fire")
-      this.emitter.emit('fire-confirm', data) //how access the data
+    this.socket.on('firing', (data) => {
+      this.emitter.emit('fire-confirm', data)
     })
 
-    socket.on('fire error', (data) => {
+    this.socket.on('fire error', (data) => {
       this.emitter.emit('fire failure', data)
     })
 
     this.emitter.on('reset', () => {
       console.log('resetting')
-      socket.emit('reset-board')
+      this.socket.emit('reset-board')
     })
 
     //listen for server broadcasted moves
-    socket.on('move', (move) => {
-      console.log('P' + move.playerIndex + ': ' + move.command)
+    this.socket.on('move', (move) => {
+      console.log('P' + move.playerNumber + ': ' + move.command)
     })
-    socket.on('board-change', (boardState) => {
-      // this.boats = boardState.boatGroup;
-      this.hitMap = boardState.hitMap
-      console.log(boardState)
+    this.socket.on('board-change', (boardState) => {
+      if(this.playerNumber != 2) {
+        this.playerMap = boardState.maps[0]
+        this.emitter.emit('enemy-map-update', boardState.maps[1])
+      } else {
+        this.playerMap = boardState.maps[1]
+        this.emitter.emit('enemy-map-update', boardState.maps[0])
+      }
+      console.log(boardState.maps)
     })
   }
 }
@@ -191,6 +192,10 @@ export default {
     //&.destroyed {
     //background-color: firebrick;
     //}
+  }
+
+  &.missed {
+    background-color: gray;
   }
 }
 

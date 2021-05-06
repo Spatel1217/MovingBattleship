@@ -20,8 +20,8 @@
           @click="clickSquare"
           v-bind:class="{
             // placed: boatMap[n - 1][m - 1],
-            hit: hitMap[m - 1][n - 1]
-            // missed: enemyMap.hitMap[n - 1][m - 1] == 'missed',
+            hit: enemyMap[m - 1][n - 1] == 'hit',
+            missed: enemyMap[n - 1][m - 1] == 'missed'
             // destroyed: isDestroyed(n, m)
           }"
       >
@@ -37,8 +37,8 @@ export default {
   name: "EnemyGrid",
   data() {
     return {
-      hitMap: Array.from({ length: 10}, () =>
-          Array.from({length: 10}, () => false)
+      enemyMap: Array.from({ length: 10}, () =>
+          Array.from({length: 10}, () => '')
       ),
     }
   },
@@ -49,7 +49,7 @@ export default {
       event.target.style.backgroundColor = "lightblue"
     },
     resetBoard() {
-      this.hitMap = Array.from({length: 10}, () =>
+      this.enemyMap = Array.from({length: 10}, () =>
           Array.from({length: 10}, () => false))
     },
     onResize() {
@@ -87,6 +87,10 @@ export default {
   mounted() {
     window.addEventListener("resize", this.onResize)
     window.dispatchEvent(new Event("resize"))
+
+    this.emitter.on('enemy-map-update', (enemyBoard) => {
+      this.enemyMap = enemyBoard
+    })
   }
 }
 </script>
@@ -146,7 +150,11 @@ export default {
     //background-color: firebrick;
     //}
   }
-}
+
+  &.missed {
+    background-color: gray;
+  }
+ }
 
 .columnLabels{
   float:left;

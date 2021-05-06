@@ -16,7 +16,6 @@ const server = http.Server(app);
 let boatGroup = new BoatGroup()
 // eslint-disable-next-line no-unused-vars
 let boat = new Boat(3,3,4,0);
-// boatGroup.addBoat(boat);
 
 const io = require("socket.io")(server, {
     cors: {
@@ -27,76 +26,80 @@ const io = require("socket.io")(server, {
     }
 }); // Attach socket.io to our server
 app.use(cors())
-
 server.listen(3000, () => console.log('server started'));
-
 const connections = [null, null];
 
-let hitMap = Array.from({ length: 10}, () =>
-    Array.from({length: 10}, () => false)
-);
+let maps = []
+function resetMaps() {
+    for(const i in [0,1]) {
+        maps[i] = Array.from({ length: 10}, () =>
+            Array.from({length: 10}, () => ''))
+    }
+}
+resetMaps()
 
 // Handle a socket connection request from web client
 io.on('connection', (socket) => {
-    io.emit('board-change', {hitMap});
 
     let playerIndex = -1;
     for (const i in connections) {
         if (connections[i] === null) {
-            playerIndex = i;
+            connections[i] = socket;
+            playerIndex = i
             break;
         }
     }
+    let playerNumber = parseInt(playerIndex) + 1;
 
-    connections[playerIndex] = socket;
-    let playerNumber = parseInt(playerIndex) + 1
+    io.emit('board-change', {maps});
+
     console.log('Player ' + playerNumber + ' Connected')
     socket.broadcast.emit('player-connect', playerNumber);
-    socket.emit('player-number', playerIndex);
+    socket.emit('player-number', playerNumber);
 
-    // When client does something
-    socket.on('actuate', (data) => {
-        console.log(`Actuation from ${playerIndex}`);
+    if(playerNumber != 0) {
+        // When client does something
+        socket.on('actuate', (data) => {
+            console.log(`Actuation from ${playerNumber}`);
 
-        const {command} = data;
+            const {command} = data;
 
-        const regExp = /^(fire) ([a-j]|[A-J])([1-9]|10)$/ig
-        const matches = regExp.exec(data.command)
+            const regExp = /^(fire) ([a-j]|[A-J])([1-9]|10)$/ig
+            const matches = regExp.exec(data.command)
 
-        if (matches != null && matches[1].toLowerCase() === "fire") {
-            const letter = matches[2]
-            let targetx = letter.charCodeAt(0)-97 // translate A-J to numerical grid position
-            const number = matches[3]
-            let targety = number-1
-            //send something back to commandbox to push the FIRING
-            socket.emit('firing', {target: [letter, number]}) //change to handle hit and miss message if/else to emit once
-            console.log('fired ' + targetx +','+ targety)
-            hitMap[targetx][targety]=true
-        } else {
-            //send something back to commandbox to push DIDNT RECOGNIZE
-            socket.emit('fire error', data)
-        }
+            if (matches != null && matches[1].toLowerCase() === "fire") {
+                const letter = matches[2]
+                let targetx = letter.charCodeAt(0) - 97 // translate A-J to numerical grid position
+                const number = matches[3]
+                let targety = number - 1
+                //send something back to commandbox to push the FIRING
+                socket.emit('firing', {target: [letter, number]}) //change to handle hit and miss message if/else to emit once
+                console.log('fired ' + targetx + ',' + targety)
+                //edits the other player's map
+                maps[(playerIndex) % 2][targetx][targety] = 'hit'
+            } else {
+                //send something back to commandbox to push DIDNT RECOGNIZE
+                socket.emit('fire error', data)
+            }
 
-        const move = {
-            playerIndex,
-            command,
-        };
+            const move = {
+                playerNumber,
+                command,
+            };
 
-        // Emit the player action to all other clients
-        io.emit('move', move);
-        io.emit('board-change', {hitMap});
-    });
+            // Emit the player action to all other clients
+            io.emit('move', move);
+            io.emit('board-change', {maps});
+        });
 
-    socket.on('reset-board', () => {
-        //reset hitMap
-        hitMap = Array.from({ length: 10}, () =>
-            Array.from({length: 10}, () => false)
-        );
-        io.emit('board-change', {hitMap});
-    })
+        socket.on('reset-board', () => {
+            resetMaps()
+            io.emit('board-change', {maps});
+        })
 
-    socket.on('disconnect', () => {
-        console.log(`Player ${playerNumber} Disconnected`);
-        connections[playerIndex] = null;
-    });
+        socket.on('disconnect', () => {
+            console.log(`Player ${playerNumber} Disconnected`);
+            connections[playerIndex] = null;
+        });
+    }
 });
