@@ -93,7 +93,7 @@ export default {
 
     const io = require("socket.io-client")
     console.log('connecting...')
-    const local = true // change to true for shared server state
+    const local = false // change to true for shared server state
     this.socket = local ? io.connect("http://localhost:3000") : io.connect("https://safe-journey-82755.herokuapp.com")
     this.resetBoard()
     //Listen for server-given player number
@@ -125,7 +125,7 @@ export default {
       console.log('P' + move.playerNumber + ': ' + move.command)
     })
     this.socket.on('board-change', (boardState) => {
-      if(this.playerNumber != 2) {
+      if(this.playerNumber == 2) {
         this.playerMap = boardState.maps[0]
         this.emitter.emit('enemy-map-update', boardState.maps[1])
       } else {
