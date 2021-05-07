@@ -125,4 +125,96 @@ export class Board {
 
         return array;
     }
+
+    //placeRandomBoats(boatGroup) {
+    //    var _this = this;
+    //    boatGroup.boats.reverse().forEach(function (boat) {
+    //        var boatCoords = _this.getRandomBoatCoords(boat);
+//
+    //        boatCoords.forEach(function (boatCoord) {
+    //            var posX = boatCoord[0],
+    //                posY = boatCoord[1];
+//
+    //            _this.boatMap[posY][posX] = boat.id;
+    //        });
+//
+    //        boatGroup.boats.reverse();
+    //    });
+//
+    //}
+//
+
+    //_getRandomInt(min, max) {
+    //    min = Math.ceil(min);
+    //    max = Math.floor(max);
+    //    return Math.floor(Math.random() * (max - min + 1)) + min;
+    //}
+    //
+    //getRandomBoatCoords(boat, otherMap = null) {
+    //    var _this = this,
+    //        centerX = -1000,
+    //        centerY = -1000,
+    //        boatSize = Number(boat.size - 1),
+    //        half = Math.floor(boatSize / 2),
+    //        remain = boatSize % 2,
+    //        coords = [],
+    //        tryCount = 1,
+    //        conflict = true;
+//
+    //    while (conflict) {
+    //        coords = [];
+    //        conflict = false;
+//
+    //        boat.horizontal = Math.random() > 0.5;
+//
+    //        if (boat.horizontal) {
+    //            (centerX = this._getRandomInt(half, this.width - half - remain - 1)),
+    //                (centerY = this._getRandomInt(0, this.height - 1));
+//
+    //            var min = centerX - half,
+    //                max = centerX + half + remain;
+//
+    //            for (let i = min; i <= max; i++) {
+    //                coords.push([i, centerY]);
+    //            }
+    //        } else {
+    //            (centerY = this._getRandomInt(half, this.height - half - remain - 1)),
+    //                (centerX = this._getRandomInt(0, this.width - 1));
+//
+    //            (min = centerY - half >= 0 ? centerY - half : 0),
+    //                (max = centerY + half + remain <= 9 ? centerY + half + remain : 9);
+//
+    //            for (let i = min; i <= max; i++) {
+    //                coords.push([centerX, i]);
+    //            }
+    //        }
+//
+    //        coords.forEach(function(coord) {
+    //            if(!conflict){
+    //                var posX = coord[0],
+    //                    posY = coord[1];
+    //                conflict = otherMap ?  otherMap[posY][posX] !== false || _this.boatMap[posY][posX] !== false : _this.boatMap[posY][posX] !== false;
+    //            }
+    //        });
+//
+    //        tryCount++;
+//
+    //        if (tryCount > 2000) {
+    //            alert("Memory Error");
+    //            break;
+    //        }
+    //    }
+    //    return coords;
+    //}
+
+    createFixedShips(boatGroup) {
+        var _this = this;
+        boatGroup._addFixedBoats();
+        boatGroup.boats.reverse().forEach(function(boat) {
+            _this.boatMap[boat.y][boat.x] = boat.id;
+        });
+
+        boatGroup.boats.reverse();
+    }
+
 }
