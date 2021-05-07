@@ -7,7 +7,7 @@ class BoatGroup {
     boats = [];
 
     constructor() {
-        this._addBoats();
+        this.addFixedBoats();
     }
 
     selectBoat(target) {
@@ -22,7 +22,7 @@ class BoatGroup {
     }
 
     //Setup 5 boats with fixed sizes and fixed starting positions and orientations
-    _addFixedBoats() {
+    addFixedBoats() {
         this.boats.push(new Boat(1, 1, 1, 0));
         this.boats[0].flip(); // vertical
         this.boats.push(new Boat(3, 2, 2, 1));
