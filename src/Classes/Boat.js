@@ -40,6 +40,10 @@ class Boat {
             this.destroyed = true;
         }
     }
+
+    flip() {
+        this.horizontal = !this.horizontal;
+    }
 }
 
 module.exports = Boat
