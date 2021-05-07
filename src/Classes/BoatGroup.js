@@ -21,11 +21,16 @@ class BoatGroup {
         }
     }
 
-    //Setup 5 boats with fixed sizes and random starting positions and orientations
-    _addBoats() {
-        for (let i = 1; i <= this.size; i++) {
-            this.boats.push(new Boat(i+1,i))
-        }
+    //Setup 5 boats with fixed sizes and fixed starting positions and orientations
+    _addFixedBoats() {
+        this.boats.push(new Boat(1, 1, 1, 0));
+        this.boats[0].flip(); // vertical
+        this.boats.push(new Boat(3, 2, 2, 1));
+        this.boats.push(new Boat(5, 5, 3, 2));
+        this.boats[2].flip(); //vertical
+        this.boats.push(new Boat(8, 2, 4, 3));
+        this.boats[3].flip(); //vertical
+        this.boats.push(new Boat(8, 8, 5, 4));
     }
 
     addBoat(boat) {
