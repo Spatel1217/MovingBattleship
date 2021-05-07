@@ -1,13 +1,13 @@
 <template>
-    <div class="box">
-      <label>Commands:</label>
-      <div class="scroll">
-        <div v-for="order in previousCommands" :key="order" class="chat">
-          {{ order }}
-        </div>
+  <div class="box">
+    <label>Commands:</label>
+    <div class="scroll">
+      <div v-for="order in previousCommands" :key="order" class="chat">
+        {{ order }}
       </div>
-      <input type="text" v-model="currentCommand" @keyup.enter="registerCommand" placeholder="Enter a Command">
     </div>
+    <input type="text" v-model="currentCommand" @keyup.enter="registerCommand" placeholder="Enter a Command">
+  </div>
 </template>
 
 <script>
@@ -41,7 +41,7 @@ export default {
 
       this.emitter.emit('send-command', {command: this.currentCommand})
 
-      if(!this.emitters) {
+      if (!this.emitters) {
         this.emitters = true
 
         //listens for fire confirmation
@@ -52,12 +52,12 @@ export default {
 
         //listen for an error with firing
         this.emitter.on('fire failure', (data) => {
-          this.previousCommands.push('Didn\'t recognize command: ' +data.command)
+          this.previousCommands.push('Didn\'t recognize command: ' + data.command)
         })
       }
 
       //this is for testing
-      if(this.currentCommand === 'reset') {
+      if (this.currentCommand === 'reset') {
         this.emitter.emit('reset')
       }
 
@@ -110,11 +110,11 @@ input {
 /*Encompasses the whole Command Box*/
 .box {
   position: relative;
-  border: 5px double ;
+  border: 5px double;
   border-radius: 5px;
   height: 20%;
   width: 70%;
-  margin-top: 220px;
+  margin-top: 250px;
   margin-right: 15%;
   margin-left: 15%;
 }

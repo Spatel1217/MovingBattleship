@@ -30,7 +30,7 @@ class BoatGroup {
         this.boats[2].flip(); //vertical
         this.boats.push(new Boat(8, 2, 4, 3));
         this.boats[3].flip(); //vertical
-        this.boats.push(new Boat(8, 8, 5, 4));
+        this.boats.push(new Boat(2, 9, 5, 4));
     }
 
     addBoat(boat) {

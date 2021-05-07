@@ -30,7 +30,7 @@
             boat: playerMap[m - 1][n - 1] == 'boat',
             hit: playerMap[m - 1][n - 1] == 'hit',
             miss: playerMap[m - 1][n - 1] == 'miss',
-            // destroyed: isDestroyed(n, m)
+            destroyed: playerMap[m - 1][n - 1] == 'destroyed',
           }"
       >
       </div>
@@ -107,8 +107,8 @@ export default {
 
     const io = require("socket.io-client")
     console.log('connecting...')
-    const local = true // change to true for shared server state
-    this.socket = local ? io.connect("http://localhost:3000") : io.connect("https://safe-journey-82755.herokuapp.com")
+    const local = false // change to true for shared server state
+    this.socket = local ? io.connect("http://localhost:3000") : io.connect("https://moving-battleships-server.herokuapp.com")
     this.resetBoard()
     //Listen for server-given player number
     this.socket.on('player-number', (playerNumber) => {

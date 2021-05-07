@@ -48,6 +48,18 @@ class Boat {
     placedBoat() {
         this.placed = !this.placed;
     }
+
+    getX() {
+        return this.x
+    }
+
+    getY() {
+        return this.y
+    }
+
+    getSize() {
+        return this.size
+    }
 }
 
 module.exports = Boat
