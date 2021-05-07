@@ -114,7 +114,7 @@ input {
   border-radius: 5px;
   height: 20%;
   width: 70%;
-  margin-top: 250px;
+  margin-top: 40vh;
   margin-right: 15%;
   margin-left: 15%;
 }

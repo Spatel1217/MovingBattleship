@@ -2,12 +2,14 @@ Toggling Button adapted from "https://paulund.co.uk/vuejs-conditional-show-and-h
 
 <template>
   <div class="instruction">
-    <p><button class="button" v-on:click="seen = !seen">i</button></p>
+    <p><button class="button" v-on:click="seen = !seen">?</button></p>
     <div class="instructionsText">
       <div v-if="seen">
-        <b style="font-size:30px"> How to Play: </b>
+        <b style="font-size:30px; font-family: fantasy"> How to Play: </b>
         <p> Objective: Find and sink all of the opponent's ships before they do to win! </p>
+        <p> Unlike regular Battleship, there are no turns! Shoot as fast as you can!</p>
         <p> Type commands into the Command Box to make your moves. Type "Fire", followed by a Letter and a Number to indicate where to fire.</p>
+        <p> Example: Fire A2, fire g4</p>
       </div>
     </div>
   </div>
@@ -35,5 +37,12 @@ export default {
 .instructionsText{
   width: 70%;
   height: 50%;
+}
+
+.button{
+  color: red;
+  font-family: monospace;
+  font-weight: bolder;
+  font-size: 40px;
 }
 </style>
