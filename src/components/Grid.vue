@@ -3,6 +3,11 @@
 <template>
   <div class="canvas">
     <div class="frame"></div>
+    <div class="line" style="margin:-10px">
+      <div class="boardLabel">
+        Your Board
+      </div>
+    </div>
     <div class="line">
       <div class="columnLabels"></div>
       <div class="columnLabels" v-for="j in 10" :key="j">
@@ -109,6 +114,7 @@ export default {
     this.socket.on('player-number', (playerNumber) => {
       console.log('P' + playerNumber + ' connected')
       this.playerNumber = playerNumber
+      this.emitter.emit('player-number', (playerNumber))
     })
 
     this.emitter.on('send-command', (data) => {
@@ -129,6 +135,8 @@ export default {
       this.socket.emit('reset-board')
     })
 
+
+
     //listen for server broadcasted moves
     this.socket.on('move', (move) => {
       console.log('P' + move.playerNumber + ': ' + move.command)
@@ -144,6 +152,7 @@ export default {
       // this.addSquareText()
       console.log(boardState.maps)
     })
+
   }
 }
 </script>
@@ -157,6 +166,7 @@ export default {
   //flex:1;
   //float:left;
   //border: 1px solid black;
+
   &:hover {
     cursor: pointer;
   }
@@ -169,6 +179,7 @@ export default {
     bottom: -15px;
     left: -15px;
     right: -15px;
+    //border: solid pink 1px;
   }
 }
 
@@ -225,8 +236,17 @@ export default {
   width: 9% - 0.5px;
   height: 50%;
   text-align: center;
-  padding-top: 2.5%;
   vertical-align: middle;
+}
+
+.boardLabel{
+  text-align: center;
+  font-weight: bold;
+  font-stretch: semi-expanded;
+  font-family: "Lucida Grande", monospace;
+  color: darkcyan;
+  margin: -20px;
+
 }
 
 </style>
