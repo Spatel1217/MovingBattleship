@@ -106,7 +106,8 @@ export class Board {
             _this.boatMap[coord[1]].splice(coord[0], 1, false);
         });
 
-        boat.position = [];
+        boat.x = null;
+        boat.y = null;
         boat.enable();
         boat.placed = false;
         boatGroup.selectBoat(boat);
@@ -209,9 +210,11 @@ export class Board {
 
     createFixedShips(boatGroup) {
         var _this = this;
-        boatGroup._addFixedBoats();
+        boatGroup.addFixedBoats();
         boatGroup.boats.reverse().forEach(function(boat) {
             _this.boatMap[boat.y][boat.x] = boat.id;
+            boat.placedBoat();
+            boatGroup.placedBoats++;
         });
 
         boatGroup.boats.reverse();
