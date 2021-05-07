@@ -22,9 +22,9 @@
           :key="m"
           @click="clickSquare"
           v-bind:class="{
-            // placed: boatMap[n - 1][m - 1],
+            boat: playerMap[m - 1][n - 1] == 'boat',
             hit: playerMap[m - 1][n - 1] == 'hit',
-            missed: playerMap[n - 1][m - 1] == 'missed'
+            miss: playerMap[m - 1][n - 1] == 'miss',
             // destroyed: isDestroyed(n, m)
           }"
       >
@@ -85,7 +85,16 @@ export default {
     },
     labelRows(i) {
       return String.fromCharCode(64+i)
-    }
+    },
+    // addSquareText() {
+    //   const elements = document.getElementsByClassName('square');
+    //   console.log(elements[0].classList)
+    //   for (let i = 0; i < elements.length; i++) {
+    //     if(elements[i].classList.contains('square miss')) {
+    //       elements[i].innerHTML = '•';
+    //     }
+    //   }
+    // }
   },
   mounted() {
     window.addEventListener("resize", this.onResize)
@@ -93,7 +102,7 @@ export default {
 
     const io = require("socket.io-client")
     console.log('connecting...')
-    const local = false // change to true for shared server state
+    const local = true // change to true for shared server state
     this.socket = local ? io.connect("http://localhost:3000") : io.connect("https://safe-journey-82755.herokuapp.com")
     this.resetBoard()
     //Listen for server-given player number
@@ -125,13 +134,14 @@ export default {
       console.log('P' + move.playerNumber + ': ' + move.command)
     })
     this.socket.on('board-change', (boardState) => {
-      if(this.playerNumber == 2) {
+      if(this.playerNumber != 1) {
         this.playerMap = boardState.maps[0]
         this.emitter.emit('enemy-map-update', boardState.maps[1])
       } else {
         this.playerMap = boardState.maps[1]
         this.emitter.emit('enemy-map-update', boardState.maps[0])
       }
+      // this.addSquareText()
       console.log(boardState.maps)
     })
   }
@@ -172,7 +182,7 @@ export default {
   width: 9% - 1px;
   border: 1px solid black;
   height: 100%;
-  background-color: white;
+  //background-color: white;
 
   // From https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting
   -webkit-touch-callout: none; /* iOS Safari */
@@ -182,20 +192,21 @@ export default {
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 
-  &.placed {
+  &.boat {
     background-color: lightblue;
   }
 
   &.hit {
     background-color: lightcoral;
-
-    //&.destroyed {
-    //background-color: firebrick;
-    //}
   }
 
-  &.missed {
-    background-color: gray;
+  &.miss {
+    background-color: lightgray;
+    content: '•';
+  }
+
+  &.destroyed {
+    background-color: darkred;
   }
 }
 

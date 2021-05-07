@@ -2,13 +2,12 @@
   <Title/>
   <Instructions/>
   <div class="gridContainer">
-    <Grid />
+    <Grid/>
     <EnemyGrid/>
   </div>
-<!--  <EnemyGrid/>-->
-<!--  <Grid />-->
-
-  <CommandBox />
+  <!--  <EnemyGrid/>-->
+  <!--  <Grid />-->
+  <CommandBox/>
 </template>
 
 <script>
@@ -28,7 +27,7 @@ export default {
     Grid,
     EnemyGrid,
   },
-  data: function() {
+  data: function () {
     return {
       display: this.onResize()
     };
@@ -46,8 +45,8 @@ export default {
 
 <style>
 
-.gridContainer{
-  display:grid;
+.gridContainer {
+  display: grid;
   width: 840px;
   grid-template-columns: 1fr 1fr;
   grid-gap: 10px;

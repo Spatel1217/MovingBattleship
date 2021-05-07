@@ -5,17 +5,12 @@ const express = require('express');
 const http = require('http');
 const cors = require('cors');
 const BoatGroup = require("./classes/BoatGroup");
-const Boat = require("./classes/Boat");
-console.log("----------------->", BoatGroup);
-console.log("----------------->", Boat);
 
 const app = express();
+app.use(cors())
 const server = http.Server(app);
 
-// eslint-disable-next-line no-unused-vars
-let boatGroup = new BoatGroup()
-// eslint-disable-next-line no-unused-vars
-let boat = new Boat(3,3,4,0);
+let boatGroup
 
 const io = require("socket.io")(server, {
     cors: {
@@ -25,17 +20,40 @@ const io = require("socket.io")(server, {
         credentials: false
     }
 }); // Attach socket.io to our server
-app.use(cors())
 server.listen(3000, () => console.log('server started'));
 const connections = [null, null];
 
 let maps = []
+
 function resetMaps() {
-    for(const i in [0,1]) {
-        maps[i] = Array.from({ length: 10}, () =>
+    for (const i in [0, 1]) {
+        maps[i] = Array.from({length: 10}, () =>
             Array.from({length: 10}, () => ''))
+        //place boats on playerMap
+        boatGroup = new BoatGroup()
+        for (let j = 0; j < boatGroup.getBoats().length; j++) {
+            let boat = boatGroup.getBoats()[j];
+            let x = boat.getX();
+            let y = boat.getY();
+            for (let k = 0; k < boat.getSize(); k++) {
+                if (boat.horizontal) {
+                    maps[i][y - 1][x - 1 + k] = 'boat'
+                } else {
+                    maps[i][y - 1 + k][x - 1] = 'boat'
+                }
+            }
+        }
     }
 }
+function hitResult(index,x,y) {
+    if (maps[(index) % 2][x][y] == 'boat') {
+        //check if boat destroyed and set to 'destroyed'
+        return 'hit'
+    } else if (maps[(index) % 2][x][y] == ''){
+        return 'miss'
+    }
+}
+
 resetMaps()
 
 // Handle a socket connection request from web client
@@ -51,13 +69,12 @@ io.on('connection', (socket) => {
     }
     let playerNumber = parseInt(playerIndex) + 1;
 
-    io.emit('board-change', {maps});
-
     console.log('Player ' + playerNumber + ' Connected')
     socket.broadcast.emit('player-connect', playerNumber);
     socket.emit('player-number', playerNumber);
+    io.emit('board-change', {maps});
 
-    if(playerNumber != 0) {
+    if (playerNumber != 0) {
         // When client does something
         socket.on('actuate', (data) => {
             console.log(`Actuation from ${playerNumber}`);
@@ -69,14 +86,14 @@ io.on('connection', (socket) => {
 
             if (matches != null && matches[1].toLowerCase() === "fire") {
                 const letter = matches[2]
-                let targetx = letter.charCodeAt(0) - 97 // translate A-J to numerical grid position
+                let targetX = letter.charCodeAt(0) - 97 // translate A-J to numerical grid position
                 const number = matches[3]
-                let targety = number - 1
+                let targetY = number - 1
                 //send something back to commandbox to push the FIRING
                 socket.emit('firing', {target: [letter, number]}) //change to handle hit and miss message if/else to emit once
-                console.log('fired ' + targetx + ',' + targety)
+                console.log('fired ' + targetX + ',' + targetY)
                 //edits the other player's map
-                maps[(playerIndex) % 2][targetx][targety] = 'hit'
+                maps[(playerIndex) % 2][targetX][targetY] = hitResult(playerIndex,targetX,targetY)
             } else {
                 //send something back to commandbox to push DIDNT RECOGNIZE
                 socket.emit('fire error', data)

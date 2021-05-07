@@ -19,9 +19,8 @@
           :key="m"
           @click="clickSquare"
           v-bind:class="{
-            // placed: boatMap[n - 1][m - 1],
             hit: enemyMap[m - 1][n - 1] == 'hit',
-            missed: enemyMap[n - 1][m - 1] == 'missed'
+            miss: enemyMap[m - 1][n - 1] == 'miss'
             // destroyed: isDestroyed(n, m)
           }"
       >
@@ -82,7 +81,17 @@ export default {
     },
     labelRows(i) {
       return String.fromCharCode(64+i)
-    }
+    },
+    // addSquareText() {
+    //   const elements = document.getElementsByClassName('square');
+    //   for (let i = 0; i < elements.length; i++) {
+    //     console.log(elements[i].classList.hasClass('miss'))
+    //     if(elements[i].classList.hasClass('miss')) {
+    //       console.log('changing square')
+    //       elements[i].innerHTML = '•';
+    //     }
+    //   }
+    // }
   },
   mounted() {
     window.addEventListener("resize", this.onResize)
@@ -90,6 +99,7 @@ export default {
 
     this.emitter.on('enemy-map-update', (enemyBoard) => {
       this.enemyMap = enemyBoard
+      // this.addSquareText()
     })
   }
 }
@@ -146,13 +156,14 @@ export default {
   &.hit {
     background-color: lightcoral;
 
-    //&.destroyed {
-    //background-color: firebrick;
-    //}
+    &.destroyed {
+    background-color: firebrick;
+    }
   }
 
-  &.missed {
-    background-color: gray;
+  &.miss {
+    background-color: lightgray;
+    content: '•';
   }
  }
 
