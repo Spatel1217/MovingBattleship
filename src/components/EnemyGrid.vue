@@ -1,6 +1,11 @@
 <template>
   <div class="canvas">
     <div class="frame"></div>
+    <div class="line" style="margin:-10px">
+      <p class="boardLabel">
+        Enemy Board
+      </p>
+    </div>
     <div class="line">
       <div class="columnLabels"></div>
       <div class="columnLabels" v-for="j in 10" :key="j">
@@ -184,6 +189,15 @@ export default {
   text-align: center;
   padding-top: 2.5%;
   vertical-align: middle;
+}
+
+.boardLabel {
+  text-align: center;
+  font-weight: bold;
+  font-stretch: semi-expanded;
+  font-family: "Lucida Grande", monospace;
+  color: firebrick;
+  margin: -20px;
 }
 
 </style>

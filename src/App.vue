@@ -1,13 +1,19 @@
 <template>
-  <Title/>
-  <Instructions/>
-  <div class="gridContainer">
-    <Grid/>
-    <EnemyGrid/>
+  <div class="topBanner">
+    <Instructions/>
+    <Title/>
   </div>
-  <!--  <EnemyGrid/>-->
-  <!--  <Grid />-->
-  <CommandBox/>
+  <div class="gridContainer">
+    <Grid />
+    <EnemyGrid/>
+    <ConnectionStatus/>
+  </div>
+<!--  <EnemyGrid/>-->
+<!--  <Grid />-->
+<!--  <div class="boxBox">-->
+
+<!--  </div>-->
+  <CommandBox />
 </template>
 
 <script>
@@ -16,6 +22,7 @@ import Grid from "./components/Grid";
 import Title from "./components/Title";
 import Instructions from "./components/Instructions";
 import EnemyGrid from "./components/EnemyGrid";
+import ConnectionStatus from "./components/ConnectionStatus";
 
 export default {
   name: "App",
@@ -26,8 +33,9 @@ export default {
     CommandBox,
     Grid,
     EnemyGrid,
+    ConnectionStatus,
   },
-  data: function () {
+  data: function() {
     return {
       display: this.onResize()
     };
@@ -44,13 +52,24 @@ export default {
 </script>
 
 <style>
+.topBanner{
+  display:grid;
+  grid-template-columns: 1fr 4fr;
+  width: 100%;
+  height: 10%;
+  /*border: solid red 1px;*/
+}
 
-.gridContainer {
-  display: grid;
-  width: 840px;
-  grid-template-columns: 1fr 1fr;
+.gridContainer{
+  display:grid;
+  width: 80%;
+  height: 300px;
+  /*height: 30%;*/
+  grid-template-columns: 2fr 2fr 1fr;
   grid-gap: 10px;
-  margin-left: 10%;
+  /*margin-left: 10%;*/
   /*border: solid blue 1px;*/
 }
+
+
 </style>
