@@ -107,7 +107,7 @@ export default {
 
     const io = require("socket.io-client")
     console.log('connecting...')
-    const local = false // change to true for shared server state
+    const local = true // change to true for shared server state
     this.socket = local ? io.connect("http://localhost:3000") : io.connect("https://moving-battleships-server.herokuapp.com")
     this.resetBoard()
     //Listen for server-given player number
@@ -115,6 +115,10 @@ export default {
       console.log('P' + playerNumber + ' connected')
       this.playerNumber = playerNumber
       this.emitter.emit('player-number', (playerNumber))
+    })
+
+    this.socket.on('player-connect', (playerNumber) => {
+      this.emitter.emit('player-connect', (playerNumber))
     })
 
     this.emitter.on('send-command', (data) => {
