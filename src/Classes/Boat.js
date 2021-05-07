@@ -44,6 +44,10 @@ class Boat {
     flip() {
         this.horizontal = !this.horizontal;
     }
+
+    placedBoat() {
+        this.placed = !this.placed;
+    }
 }
 
 module.exports = Boat
