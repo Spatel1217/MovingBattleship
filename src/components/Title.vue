@@ -18,6 +18,7 @@ name: "Title"
   margin-left: 30%;
   font-size: 80px;
   color: orange;
+  font-family: "Copperplate", fantasy;
 }
 
 
