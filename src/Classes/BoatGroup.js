@@ -106,7 +106,6 @@ class BoatGroup {
             this.addBoat(newBoat)
             for (let l = 0; l < this.boatSizes[j]; l++) {
                 if (newBoat.horizontal) {
-                    console.log('IND trying to set x: ' + (newBoat.getX() - 1 + l) + ' y: ' + (newBoat.getY() - 1))
                     this._representedMap[newBoat.getX() - 1 + l][newBoat.getY() - 1] = 'boat'
                 } else {
                     this._representedMap[newBoat.getX() - 1][newBoat.getY() - 1 + l] = 'boat'
@@ -130,10 +129,10 @@ class BoatGroup {
     hitBoat(x, y) {
         for (let i = 0; i < this.boats.length; i++) {
             if (this.boats[i].testHit(x,y)) {
-                return true;
+                return this.boats[i];
             }
         }
-        return false;
+        return null;
     }
 
     allDestroyed() {

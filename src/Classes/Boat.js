@@ -5,7 +5,7 @@ class Boat {
     hitpoints = 0;
     x = 0;
     y = 0;
-    // position = []; //not sure how we are going to store position. will we use coordinates within the code? and only use the a-j 0-9 system for user input?
+    position = []; //not sure how we are going to store position. will we use coordinates within the code? and only use the a-j 0-9 system for user input?
     placed = false;
     horizontal = true;
     selected = false;
@@ -19,6 +19,7 @@ class Boat {
         this.id = id;
         this.size = size;
         this.hitpoints = size; //segments of the ship equal hitpoints as in regular battleship
+        this.setupPositions();
     }
 
     select() {
@@ -37,7 +38,6 @@ class Boat {
 
     hit() {
         this.hitpoints--;
-        console.log("hit")
         if (this.hitpoints === 0) {
             this.destroyed = true;
         }
@@ -63,16 +63,11 @@ class Boat {
         return this.size
     }
 
-    //returns true if the boat was destroyed
+    //returns true if successful hit
     testHit(x, y) {
-        if (this.horizontal) {
-            if (this.getY() === y && x >= this.getX() && x <= this.getX() + this.getSize() - 1){
-                this.hit();
-                return true;
-            }
-        }
-        else{
-            if (this.getX() === x && y >= this.getY() && y <= this.getY() + this.getSize() - 1){
+        for (const i in this.position) {
+            // console.log('x ' + x + ' otherx ' + this.position[i][0])
+            if (x == this.position[i][0] && y == this.position[i][1]) {
                 this.hit();
                 return true;
             }
@@ -82,6 +77,20 @@ class Boat {
 
     isDestroyed() {
         return this.destroyed;
+    }
+
+    setupPositions() {
+        for(let i = 0; i < this.size; i++) {
+            if(this.horizontal) {
+                this.position.push([this.x + i, this.y]);
+            } else {
+                this.position.push([this.x, this.y + i]);
+            }
+        }
+    }
+
+    getPosition() {
+        return this.position;
     }
 }
 

@@ -25,8 +25,8 @@
           @click="clickSquare"
           v-bind:class="{
             hit: enemyMap[m - 1][n - 1] == 'hit',
-            miss: enemyMap[m - 1][n - 1] == 'miss'
-            // destroyed: isDestroyed(n, m)
+            miss: enemyMap[m - 1][n - 1] == 'miss',
+            destroyed: enemyMap[m - 1][n - 1] == 'destroyed',
           }"
       >
       </div>
@@ -160,15 +160,14 @@ export default {
 
   &.hit {
     background-color: lightcoral;
-
-    &.destroyed {
-    background-color: firebrick;
-    }
   }
 
   &.miss {
     background-color: lightgray;
-    content: '•';
+  }
+
+  &.destroyed {
+    background-color: darkred;
   }
  }
 
