@@ -12,9 +12,10 @@ class Boat {
     active = true;
     destroyed = false;
 
-    constructor(x, y, size, id) {
+    constructor(x, y, size, horizontal, id) {
         this.x = x;
         this.y = y;
+        this.horizontal = horizontal;
         this.id = id;
         this.size = size;
         this.hitpoints = size; //segments of the ship equal hitpoints as in regular battleship

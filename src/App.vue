@@ -6,7 +6,7 @@
   <div class="gridContainer">
     <Grid />
     <EnemyGrid/>
-    <ConnectionStatus/>
+<!--    <ConnectionStatus/>-->
   </div>
 <!--  <EnemyGrid/>-->
 <!--  <Grid />-->
@@ -22,7 +22,7 @@ import Grid from "./components/Grid";
 import Title from "./components/Title";
 import Instructions from "./components/Instructions";
 import EnemyGrid from "./components/EnemyGrid";
-import ConnectionStatus from "./components/ConnectionStatus";
+// import ConnectionStatus from "./components/ConnectionStatus";
 
 export default {
   name: "App",
@@ -33,7 +33,7 @@ export default {
     CommandBox,
     Grid,
     EnemyGrid,
-    ConnectionStatus,
+    // ConnectionStatus,
   },
   data: function() {
     return {

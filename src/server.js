@@ -27,22 +27,9 @@ let maps = []
 
 function resetMaps() {
     for (const i in [0, 1]) {
-        maps[i] = Array.from({length: 10}, () =>
-            Array.from({length: 10}, () => ''))
         //place boats on playerMap
         boatGroup = new BoatGroup()
-        for (let j = 0; j < boatGroup.getBoats().length; j++) {
-            let boat = boatGroup.getBoats()[j];
-            let x = boat.getX();
-            let y = boat.getY();
-            for (let k = 0; k < boat.getSize(); k++) {
-                if (boat.horizontal) {
-                    maps[i][y - 1][x - 1 + k] = 'boat'
-                } else {
-                    maps[i][y - 1 + k][x - 1] = 'boat'
-                }
-            }
-        }
+        maps[i] = boatGroup.representedMap
     }
 }
 function hitResult(index,x,y) {
