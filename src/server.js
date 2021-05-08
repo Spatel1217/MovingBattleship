@@ -81,10 +81,11 @@ io.on('connection', (socket) => {
                 const number = matches[3]
                 let targetY = number - 1
                 //send something back to commandbox to push the FIRING
-                socket.emit('firing', {target: [letter, number]}) //change to handle hit and miss message if/else to emit once
+                let hitRes = hitResult(playerIndex,targetX,targetY)
+                socket.emit('firing', {target: [letter, number, hitRes]})  //change to handle hit and miss message if/else to emit once
                 console.log('fired ' + targetX + ',' + targetY)
                 //edits the other player's map
-                maps[(playerIndex) % 2][targetX][targetY] = hitResult(playerIndex,targetX,targetY)
+                maps[(playerIndex) % 2][targetX][targetY] = hitRes
             } else {
                 //send something back to commandbox to push DIDNT RECOGNIZE
                 socket.emit('fire error', data)

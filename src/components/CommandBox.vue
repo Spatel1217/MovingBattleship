@@ -47,12 +47,11 @@ export default {
         //listens for fire confirmation
         this.emitter.on('fire-confirm', (data) => {
           console.log("fire confirm")
-          this.previousCommands.push('Shot at: ' + data.target[0] + data.target[1])
-        })
-
-        //listen for an error with firing
-        this.emitter.on('fire failure', (data) => {
-          this.previousCommands.push('Didn\'t recognize command: ' + data.command)
+          if(data.target[2] === 'hit') {
+            this.previousCommands.push('HIT: ' + data.target[0] + data.target[1])
+          } else if(data.target[2] === 'miss') {
+            this.previousCommands.push('MISSED: ' + data.target[0] + data.target[1])
+          }
         })
       }
 
