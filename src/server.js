@@ -10,7 +10,7 @@ const app = express();
 app.use(cors())
 const server = http.Server(app);
 
-let boatGroup
+let boatGroups = []
 
 const io = require("socket.io")(server, {
     cors: {
@@ -28,19 +28,28 @@ let maps = []
 function resetMaps() {
     for (const i in [0, 1]) {
         //place boats on playerMap
-        boatGroup = new BoatGroup()
-        maps[i] = boatGroup.representedMap
+        let boatGroup = new BoatGroup();
+        boatGroups[i] = boatGroup;
+        maps[i] = boatGroup.representedMap;
     }
 }
-function hitResult(index,x,y) {
+
+function hitResult(index, x, y) {
     if (maps[(index) % 2][x][y] == 'boat') {
         //check if boat destroyed and set to 'destroyed'
-        boatGroup.hitBoat(x + 1,y + 1);
-        if (boatGroup.allDestroyed()){
-            console.log("Game Over");
+        let hitBoat = boatGroups[index % 2].hitBoat(x + 1, y + 1);
+        if (hitBoat.isDestroyed()) {
+            // set all squares in hit boat to destroyed
+            for (const i in hitBoat.getPosition()) {
+                maps[(index) % 2][hitBoat.getPosition()[i][0] - 1][hitBoat.getPosition()[i][1] - 1] = 'destroyed';
+            }
+            if (boatGroups[index % 2].allDestroyed()) {
+                console.log("Game Over P" + (index % 2 + 1) + ' Wins!');
+            }
+            return 'destroyed';
         }
         return 'hit'
-    } else if (maps[(index) % 2][x][y] == ''){
+    } else if (maps[(index) % 2][x][y] == '') {
         return 'miss'
     }
 }
@@ -81,7 +90,7 @@ io.on('connection', (socket) => {
                 const number = matches[3]
                 let targetY = number - 1
                 //send something back to commandbox to push the FIRING
-                let hitRes = hitResult(playerIndex,targetX,targetY)
+                let hitRes = hitResult(playerIndex, targetX, targetY)
                 socket.emit('firing', {target: [letter, number, hitRes]})  //change to handle hit and miss message if/else to emit once
                 console.log('fired ' + targetX + ',' + targetY)
                 //edits the other player's map
