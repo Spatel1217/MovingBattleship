@@ -4,7 +4,7 @@ class BoatGroup {
     size = 5;
     placedBoats = 0;
     selectedBoat = null;
-    boatSizes = [1];
+    boatSizes = [1, 2, 3, 4, 5];
     boats = [];
     _representedMap = [];
 
@@ -22,15 +22,6 @@ class BoatGroup {
         if (target !== null) {
             target.select;
         }
-    }
-
-    //Setup 5 boats with fixed sizes and fixed starting positions and orientations for initial testing
-    addFixedBoats() {
-        this.boats.push(new Boat(1, 1, 1, false, 0));
-        this.boats.push(new Boat(3, 2, 2, true, 1));
-        this.boats.push(new Boat(5, 5, 3, false, 2));
-        this.boats.push(new Boat(8, 2, 4, false, 3));
-        this.boats.push(new Boat(2, 9, 5, true, 4));
     }
 
     addRandomBoats() {
@@ -128,7 +119,7 @@ class BoatGroup {
 
     hitBoat(x, y) {
         for (let i = 0; i < this.boats.length; i++) {
-            if (this.boats[i].testHit(x,y)) {
+            if (this.boats[i].testHit(x, y)) {
                 return this.boats[i];
             }
         }

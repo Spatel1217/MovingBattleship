@@ -9,12 +9,12 @@
     <div class="line">
       <div class="columnLabels"></div>
       <div class="columnLabels" v-for="j in 10" :key="j">
-        {{labelRows(j)}}
+        {{ labelRows(j) }}
       </div>
     </div>
     <div class="line" v-for="n in 10" :key="n">
       <div class="rowLabels">
-        {{n}}
+        {{ n }}
       </div>
       <div
           class="square"
@@ -40,7 +40,7 @@ export default {
   name: "EnemyGrid",
   data() {
     return {
-      enemyMap: Array.from({ length: 10}, () =>
+      enemyMap: Array.from({length: 10}, () =>
           Array.from({length: 10}, () => '')
       ),
     }
@@ -79,7 +79,7 @@ export default {
       $(".line").css("height", (target.height * scale) / 10);
     },
     labelRows(i) {
-      return String.fromCharCode(64+i)
+      return String.fromCharCode(64 + i)
     },
     // addSquareText() {
     //   const elements = document.getElementsByClassName('square');
@@ -163,12 +163,12 @@ export default {
   &.destroyed {
     background-color: darkred;
   }
- }
+}
 
-.columnLabels{
-  float:left;
+.columnLabels {
+  float: left;
   width: 9% - 0.5px;
-  text-align:center;
+  text-align: center;
   //border: solid black 0.1px;
   padding-top: 10px;
 

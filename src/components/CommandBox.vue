@@ -6,7 +6,8 @@
         {{ order }}
       </div>
     </div>
-    <input type="text" v-model="currentCommand" @keyup.enter="registerCommand" v-if="!stopCommands" placeholder="Enter a Command">
+    <input type="text" v-model="currentCommand" @keyup.enter="registerCommand" v-if="!stopCommands"
+           placeholder="Enter a Command">
   </div>
 </template>
 
@@ -32,18 +33,22 @@ export default {
         //listens for fire confirmation
         this.emitter.on('fire-confirm', (data) => {
           console.log("fire confirm")
-          if(data.target[2] === 'hit') {
+          if (data.target[2] === 'hit') {
             this.previousCommands.push('Hit: ' + data.target[0] + data.target[1])
-          } else if(data.target[2] === 'miss') {
+          } else if (data.target[2] === 'miss') {
             this.previousCommands.push('Missed: ' + data.target[0] + data.target[1])
-          } else if(data.target[2] === 'destroyed') {
+          } else if (data.target[2] === 'destroyed') {
             this.previousCommands.push('Destroyed Boat At: ' + data.target[0] + data.target[1])
           }
         })
 
         this.emitter.on('game-over', () => {
-          console.log("games over tupid")
           this.stopCommands = true
+        })
+
+        this.emitter.on('new-game', () => {
+          this.stopCommands = false
+          this.previousCommands.push('Starting new Game...')
         })
       }
 

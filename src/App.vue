@@ -5,16 +5,16 @@
     <WinBanner/>
   </div>
   <div class="gridContainer">
-    <Grid />
+    <Grid/>
     <EnemyGrid/>
     <ConnectionStatus/>
   </div>
-<!--  <EnemyGrid/>-->
-<!--  <Grid />-->
-<!--  <div class="boxBox">-->
+  <!--  <EnemyGrid/>-->
+  <!--  <Grid />-->
+  <!--  <div class="boxBox">-->
 
-<!--  </div>-->
-  <CommandBox />
+  <!--  </div>-->
+  <CommandBox/>
 </template>
 
 <script>
@@ -38,7 +38,7 @@ export default {
     EnemyGrid,
     ConnectionStatus,
   },
-  data: function() {
+  data: function () {
     return {
       display: this.onResize()
     };
@@ -55,16 +55,16 @@ export default {
 </script>
 
 <style>
-.topBanner{
-  display:grid;
+.topBanner {
+  display: grid;
   grid-template-columns: 1fr 4fr;
   width: 100%;
   height: 10%;
   /*border: solid red 1px;*/
 }
 
-.gridContainer{
-  display:grid;
+.gridContainer {
+  display: grid;
   width: 80%;
   height: 300px;
   /*height: 30%;*/

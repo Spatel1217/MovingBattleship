@@ -11,13 +11,13 @@
     <div class="line">
       <div class="columnLabels"></div>
       <div class="columnLabels" v-for="j in 10" :key="j">
-        {{labelRows(j)}}
+        {{ labelRows(j) }}
       </div>
     </div>
-<!--    <RowLabel/>-->
+    <!--    <RowLabel/>-->
     <div class="line" v-for="n in 10" :key="n">
       <div class="rowLabels">
-        {{n}}
+        {{ n }}
       </div>
       <div
           class="square"
@@ -44,7 +44,7 @@ export default {
   data() {
     return {
       socket: null,
-      playerMap: Array.from({ length: 10}, () =>
+      playerMap: Array.from({length: 10}, () =>
           Array.from({length: 10}, () => '')
       ),
       playerNumber: -1,
@@ -52,7 +52,7 @@ export default {
   },
   methods: {
     resetBoard() {
-      this.hitMap = Array.from({ length: 10}, () =>
+      this.hitMap = Array.from({length: 10}, () =>
           Array.from({length: 10}, () => false))
     },
     onResize() {
@@ -84,17 +84,8 @@ export default {
       $(".line").css("height", (target.height * scale) / 10);
     },
     labelRows(i) {
-      return String.fromCharCode(64+i)
+      return String.fromCharCode(64 + i)
     },
-    // addSquareText() {
-    //   const elements = document.getElementsByClassName('square');
-    //   console.log(elements[0].classList)
-    //   for (let i = 0; i < elements.length; i++) {
-    //     if(elements[i].classList.contains('square miss')) {
-    //       elements[i].innerHTML = '•';
-    //     }
-    //   }
-    // }
   },
   mounted() {
     window.addEventListener("resize", this.onResize)
@@ -102,7 +93,7 @@ export default {
 
     const io = require("socket.io-client")
     console.log('connecting...')
-    const local = true // change to true for shared server state
+    const local = false // change to true for shared server state
     this.socket = local ? io.connect("http://localhost:3000") : io.connect("https://moving-battleships-server.herokuapp.com")
     this.resetBoard()
     //Listen for server-given player number
@@ -151,10 +142,12 @@ export default {
     })
 
     this.socket.on('game-over', (winnerID) => {
-      console.log('ended at Grid')
       this.emitter.emit('game-over', (winnerID))
     })
 
+    this.socket.on('new-game', () => {
+      this.emitter.emit('new-game')
+    })
 
 
     //listen for server broadcasted moves
@@ -162,7 +155,7 @@ export default {
       console.log('P' + move.playerNumber + ': ' + move.command)
     })
     this.socket.on('board-change', (boardState) => {
-      if(this.playerNumber != 1) {
+      if (this.playerNumber != 1) {
         this.playerMap = boardState.maps[0]
         this.emitter.emit('enemy-map-update', boardState.maps[1])
       } else {
@@ -243,10 +236,10 @@ export default {
   }
 }
 
-.columnLabels{
-  float:left;
+.columnLabels {
+  float: left;
   width: 9% - 0.5px;
-  text-align:center;
+  text-align: center;
   //border: solid black 0.1px;
   padding-top: 10px;
 
@@ -261,7 +254,7 @@ export default {
   vertical-align: middle;
 }
 
-.boardLabel{
+.boardLabel {
   text-align: center;
   font-weight: bold;
   font-stretch: semi-expanded;

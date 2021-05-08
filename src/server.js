@@ -29,12 +29,27 @@ let isGameOver = false;
 let winningPlayer = -1;
 
 function resetMaps() {
+    isGameOver = false;
+    winningPlayer = -1;
+    spectators = 0;
     for (const i in [0, 1]) {
         //place boats on playerMap
         let boatGroup = new BoatGroup();
         boatGroups[i] = boatGroup;
         maps[i] = boatGroup.representedMap;
     }
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// eslint-disable-next-line no-unused-vars
+async function newGame() {
+    console.log('Taking a break...');
+    await sleep(5000);
+    console.log('5 seconds later, showing sleep in a loop...');
+    resetMaps()
 }
 
 function hitResult(index, x, y) {
@@ -78,6 +93,7 @@ io.on('connection', (socket) => {
     io.emit('player-connect', playerNumber);
     socket.emit('player-number', playerNumber);
     io.emit('board-change', {maps});
+    socket.emit('spectator-count', (spectators));
 
     //Emit connection spots status
     if (connections[0] !== null) {
@@ -108,13 +124,15 @@ io.on('connection', (socket) => {
                 socket.emit('firing', {target: [letter, number, hitRes]})  //change to handle hit and miss message if/else to emit once
                 console.log('fired ' + targetX + ',' + targetY)
                 //edits the other player's map
-                maps[(playerIndex) % 2][targetX][targetY] = hitRes
+                maps[(playerIndex) % 2][targetX][targetY] = hitRes;
             } else {
                 //send something back to commandbox to push DIDNT RECOGNIZE
-                socket.emit('fire error', data)
+                socket.emit('fire error', data);
             }
             if (isGameOver) {
-                io.emit("game-over", winningPlayer)
+                io.emit("game-over", winningPlayer);
+                // newGame();
+                io.emit('new-game')
             }
 
             const move = {
@@ -128,7 +146,7 @@ io.on('connection', (socket) => {
         });
 
         socket.on('reset-board', () => {
-            resetMaps()
+            resetMaps();
             io.emit('board-change', {maps});
         })
     } else {

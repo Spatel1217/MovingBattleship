@@ -15,12 +15,11 @@ export default {
     }
   },
   methods: {
-    message(win){
+    message(win) {
       if (this.playerNumber !== 0) {
-        if (win === this.playerNumber ) { // Win
+        if (win === this.playerNumber) { // Win
           return "You Won! You sunk all of the opponents' ships!"
-        }
-        else { // Lose
+        } else { // Lose
           return "You Lost! The enemy sunk all of your ships!"
         }
       } else {
@@ -41,6 +40,9 @@ export default {
     this.emitter.on('game-over', (winnerID) => {
       this.win = winnerID;
       this.seen = true;
+    })
+    this.emitter.on('new-game', () => {
+      this.seen = false
     })
   }
 
