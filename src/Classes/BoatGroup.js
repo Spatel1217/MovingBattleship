@@ -44,31 +44,53 @@ class BoatGroup {
         this._representedMap = Array.from({length: 10}, () =>
             Array.from({length: 10}, () => ''))
         //placing boats into representedMap
-        let validBoatPositions = [];
+        let validBoatPositions;
+        let horizontal;
+        let boatFits;
         for (let j = 0; j < this.boatSizes.length; j++) {
+            validBoatPositions = [];
             //j is the id of each boat, this.boatSizes[j] is the size
             //im sorry to whoever teaches algorithms and sees this
             //finding valid positions for every boat size
-            for (const hor in [true, false]) {
-                for(let x = 1; x <= 10; x++) {
-                    for(let y = 1; y <= 10; y++) {
-                        if(this.representedMap[x-1][y-1] !== 'boat') {
-                            let boatFits = true;
+            for (const h in [0, 1]) {
+                horizontal = h == 0
+                //for horizontal and vertical placement
+                for (let x = 1; x <= 10; x++) {
+                    //for every x
+                    for (let y = 1; y <= 10; y++) {
+                        //for every y
+                        if (this._representedMap[x - 1][y - 1] !== 'boat') {
+                            //for every empty spot
+                            boatFits = true;
                             for (let k = 0; k < this.boatSizes[j]; k++) {
-                                if (hor) {
-                                    if(this._representedMap[x - 1 + k][y - 1] == 'boat') {
+                                //for each segment in the boat
+                                if (horizontal) {
+                                    //check if pos is on the grid
+                                    if ((x + this.boatSizes[j] - 1) <= 10) {
+                                        //check if pos is already a boat
+                                        if (this._representedMap[x - 1 + k][y - 1] === 'boat') {
+                                            boatFits = false;
+                                            break;
+                                        }
+                                    } else {
                                         boatFits = false;
                                         break;
                                     }
                                 } else {
-                                    if(this._representedMap[x - 1][y - 1 + k] = 'boat') {
+                                    if ((y + this.boatSizes[j] - 1) <= 10) {
+                                        if (this._representedMap[x - 1][y - 1 + k] === 'boat') {
+                                            boatFits = false;
+                                            break;
+                                        }
+                                    } else {
                                         boatFits = false;
                                         break;
                                     }
                                 }
                             }
-                            if(boatFits) {
-                                validBoatPositions.push([x, y, hor])
+                            //if pos is valid, add to list
+                            if (boatFits) {
+                                validBoatPositions.push([x, y, horizontal])
                             }
                         }
                     }
@@ -76,16 +98,18 @@ class BoatGroup {
             }
             let max = Math.floor(validBoatPositions.length);
             let validPosIndex = Math.floor(Math.random() * max);
+            let boatPosition = validBoatPositions[validPosIndex]
             // creating a new boat with new Boat(x, y, size, horizontal, id) from list of valid positions
-            let newBoat = new Boat(validBoatPositions[validPosIndex][0],
-                validBoatPositions[validPosIndex][1], this.boatSizes[j],
-                validBoatPositions[validPosIndex][2], j)
+            let newBoat = new Boat(boatPosition[0],
+                boatPosition[1], this.boatSizes[j],
+                boatPosition[2], j)
             this.addBoat(newBoat)
             for (let l = 0; l < this.boatSizes[j]; l++) {
                 if (newBoat.horizontal) {
+                    console.log('IND trying to set x: ' + (newBoat.getX() - 1 + l) + ' y: ' + (newBoat.getY() - 1))
                     this._representedMap[newBoat.getX() - 1 + l][newBoat.getY() - 1] = 'boat'
                 } else {
-                    this._representedMap[newBoat.getX()- 1][newBoat.getY() - 1 + l] = 'boat'
+                    this._representedMap[newBoat.getX() - 1][newBoat.getY() - 1 + l] = 'boat'
                 }
             }
         }
