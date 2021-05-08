@@ -43,10 +43,10 @@ function hitResult(index, x, y) {
             for (const i in hitBoat.getPosition()) {
                 maps[(index) % 2][hitBoat.getPosition()[i][0] - 1][hitBoat.getPosition()[i][1] - 1] = 'destroyed';
             }
+            if (boatGroups[index % 2].allDestroyed()) {
+                console.log("Game Over P" + (index % 2 + 1) + ' Wins!');
+            }
             return 'destroyed';
-        }
-        if (boatGroups[index % 2].allDestroyed()) {
-            console.log("Game Over P" + index + ' Wins!');
         }
         return 'hit'
     } else if (maps[(index) % 2][x][y] == '') {
@@ -90,7 +90,7 @@ io.on('connection', (socket) => {
                 const number = matches[3]
                 let targetY = number - 1
                 //send something back to commandbox to push the FIRING
-                let hitRes = hitResult(playerIndex,targetX,targetY)
+                let hitRes = hitResult(playerIndex, targetX, targetY)
                 socket.emit('firing', {target: [letter, number, hitRes]})  //change to handle hit and miss message if/else to emit once
                 console.log('fired ' + targetX + ',' + targetY)
                 //edits the other player's map
