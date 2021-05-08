@@ -149,6 +149,10 @@ export default {
       this.emitter.emit('new-game')
     })
 
+    this.socket.on('play-again', () => {
+      this.socket.emit('play-again')
+    })
+
 
     //listen for server broadcasted moves
     this.socket.on('move', (move) => {

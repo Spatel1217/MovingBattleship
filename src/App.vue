@@ -3,6 +3,7 @@
     <Instructions/>
     <Title/>
     <WinBanner/>
+    <ResetButton/>
   </div>
   <div class="gridContainer">
     <Grid/>
@@ -25,11 +26,13 @@ import Instructions from "./components/Instructions";
 import EnemyGrid from "./components/EnemyGrid";
 import ConnectionStatus from "./components/ConnectionStatus";
 import WinBanner from "./components/WinBanner";
+import ResetButton from "./components/ResetButton";
 
 export default {
   name: "App",
 
   components: {
+    ResetButton,
     Instructions,
     Title,
     WinBanner,
