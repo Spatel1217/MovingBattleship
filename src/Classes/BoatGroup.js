@@ -4,7 +4,7 @@ class BoatGroup {
     size = 5;
     placedBoats = 0;
     selectedBoat = null;
-    boatSizes = [1, 2];
+    boatSizes = [1];
     boats = [];
     _representedMap = [];
 

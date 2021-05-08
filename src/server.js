@@ -25,6 +25,8 @@ const connections = [null, null];
 
 let maps = []
 let spectators = 0;
+let isGameOver = false;
+let winningPlayer = -1;
 
 function resetMaps() {
     for (const i in [0, 1]) {
@@ -46,7 +48,8 @@ function hitResult(index, x, y) {
             }
             if (boatGroups[index % 2].allDestroyed()) {
                 console.log("Game Over P" + (index % 2 + 1) + ' Wins!');
-                io.emit("game-over", (index % 2 + 1))
+                isGameOver = true;
+                winningPlayer = (index % 2 + 1)
             }
             return 'destroyed';
         }
@@ -109,6 +112,9 @@ io.on('connection', (socket) => {
             } else {
                 //send something back to commandbox to push DIDNT RECOGNIZE
                 socket.emit('fire error', data)
+            }
+            if (isGameOver) {
+                io.emit("game-over", winningPlayer)
             }
 
             const move = {

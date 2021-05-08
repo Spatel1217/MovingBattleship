@@ -6,7 +6,7 @@
         {{ order }}
       </div>
     </div>
-    <input type="text" v-model="currentCommand" @keyup.enter="registerCommand" placeholder="Enter a Command">
+    <input type="text" v-model="currentCommand" @keyup.enter="registerCommand" v-if="!stopCommands" placeholder="Enter a Command">
   </div>
 </template>
 
@@ -17,7 +17,8 @@ export default {
     return {
       currentCommand: '',
       previousCommands: [],
-      emitters: false
+      emitters: false, //tracks if the emitters have been made already
+      stopCommands: false
     }
   },
   methods: {
@@ -39,6 +40,11 @@ export default {
             this.previousCommands.push('Destroyed Boat At: ' + data.target[0] + data.target[1])
           }
         })
+
+        this.emitter.on('game-over', () => {
+          console.log("games over tupid")
+          this.stopCommands = true
+        })
       }
 
       //this is for testing
@@ -47,21 +53,10 @@ export default {
       }
 
       this.currentCommand = ''
-      // this.autoScroll()
-    },
-    // var scrolled = false;
-    autoScroll() {
-      // var container = this.querySelector("scroll");
-      // var scrollHeight = container.scrollHeight;
-      // // var container = this.getElementById('scroll').lastItem
-      // container.scrollTop = scrollHeight;
-      // this.getElementsByClassName('scroll').scrollHeight = this.lastCommand.offsetHeight + this.lastCommand.offsetHeight
     },
     mounted() {
-      // this.autoScroll();
     },
     updated() {
-      // this.autoScroll()
     }
   }
 }
