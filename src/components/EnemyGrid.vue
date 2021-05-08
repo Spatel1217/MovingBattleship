@@ -22,7 +22,6 @@
           :data-x="m"
           v-for="m in 10"
           :key="m"
-          @click="clickSquare"
           v-bind:class="{
             hit: enemyMap[m - 1][n - 1] == 'hit',
             miss: enemyMap[m - 1][n - 1] == 'miss',
@@ -47,11 +46,6 @@ export default {
     }
   },
   methods: {
-    clickSquare: function (event) {
-      // alert("Clicked (" + event.target.dataset.x + ", " + event.target.dataset.y + ")")
-      event.target.innerHTML = "X"
-      event.target.style.backgroundColor = "lightblue"
-    },
     resetBoard() {
       this.enemyMap = Array.from({length: 10}, () =>
           Array.from({length: 10}, () => false))

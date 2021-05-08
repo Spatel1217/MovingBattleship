@@ -25,7 +25,6 @@
           :data-x="m"
           v-for="m in 10"
           :key="m"
-          @click="clickSquare"
           v-bind:class="{
             boat: playerMap[m - 1][n - 1] == 'boat',
             hit: playerMap[m - 1][n - 1] == 'hit',
@@ -52,10 +51,6 @@ export default {
     }
   },
   methods: {
-    clickSquare: function (event) {
-      // alert("Clicked (" + event.target.dataset.x + ", " + event.target.dataset.y + ")")
-      event.target.style.backgroundColor = "lightblue"
-    },
     resetBoard() {
       this.hitMap = Array.from({ length: 10}, () =>
           Array.from({length: 10}, () => false))
