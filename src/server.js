@@ -35,6 +35,10 @@ function resetMaps() {
 function hitResult(index,x,y) {
     if (maps[(index) % 2][x][y] == 'boat') {
         //check if boat destroyed and set to 'destroyed'
+        boatGroup.hitBoat(x + 1,y + 1);
+        if (boatGroup.allDestroyed()){
+            console.log("Game Over");
+        }
         return 'hit'
     } else if (maps[(index) % 2][x][y] == ''){
         return 'miss'

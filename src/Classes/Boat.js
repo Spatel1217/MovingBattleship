@@ -37,6 +37,7 @@ class Boat {
 
     hit() {
         this.hitpoints--;
+        console.log("hit")
         if (this.hitpoints === 0) {
             this.destroyed = true;
         }
@@ -60,6 +61,27 @@ class Boat {
 
     getSize() {
         return this.size
+    }
+
+    //returns true if the boat was destroyed
+    testHit(x, y) {
+        if (this.horizontal) {
+            if (this.getY() === y && x >= this.getX() && x <= this.getX() + this.getSize() - 1){
+                this.hit();
+                return true;
+            }
+        }
+        else{
+            if (this.getX() === x && y >= this.getY() && y <= this.getY() + this.getSize() - 1){
+                this.hit();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    isDestroyed() {
+        return this.destroyed;
     }
 }
 

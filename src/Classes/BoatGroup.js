@@ -4,7 +4,7 @@ class BoatGroup {
     size = 5;
     placedBoats = 0;
     selectedBoat = null;
-    boatSizes = [1, 2, 3, 4, 5];
+    boatSizes = [1, 2];
     boats = [];
     _representedMap = [];
 
@@ -125,6 +125,24 @@ class BoatGroup {
 
     get representedMap() {
         return this._representedMap;
+    }
+
+    hitBoat(x, y) {
+        for (let i = 0; i < this.boats.length; i++) {
+            if (this.boats[i].testHit(x,y)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    allDestroyed() {
+        for (let i = 0; i < this.boats.length; i++) {
+            if (!this.boats[i].isDestroyed()) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 
