@@ -40,15 +40,13 @@ function resetMaps() {
     }
 }
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+// function sleep(ms) {
+//     return new Promise(resolve => setTimeout(resolve, ms));
+// }
 
 // eslint-disable-next-line no-unused-vars
-async function newGame() {
-    console.log('Taking a break...');
-    await sleep(5000);
-    console.log('5 seconds later, showing sleep in a loop...');
+function newGame() {
+    // await sleep(5000);
     resetMaps()
 }
 
@@ -131,8 +129,6 @@ io.on('connection', (socket) => {
             }
             if (isGameOver) {
                 io.emit("game-over", winningPlayer);
-                // newGame();
-                io.emit('new-game')
             }
 
             const move = {
@@ -148,7 +144,14 @@ io.on('connection', (socket) => {
         socket.on('reset-board', () => {
             resetMaps();
             io.emit('board-change', {maps});
-        })
+        });
+
+        socket.on('play-again', () => {
+            newGame();
+            io.emit('new-game')
+            io.emit('board-change', {maps});
+        });
+
     } else {
         spectators++;
         socket.emit('spectator-count', (spectators))

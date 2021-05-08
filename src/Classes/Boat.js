@@ -1,4 +1,3 @@
-
 class Boat {
     id = 0;
     size = 0;
@@ -80,8 +79,8 @@ class Boat {
     }
 
     setupPositions() {
-        for(let i = 0; i < this.size; i++) {
-            if(this.horizontal) {
+        for (let i = 0; i < this.size; i++) {
+            if (this.horizontal) {
                 this.position.push([this.x + i, this.y]);
             } else {
                 this.position.push([this.x, this.y + i]);
