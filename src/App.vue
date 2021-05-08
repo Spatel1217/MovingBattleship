@@ -2,6 +2,7 @@
   <div class="topBanner">
     <Instructions/>
     <Title/>
+    <WinBanner/>
   </div>
   <div class="gridContainer">
     <Grid />
@@ -23,6 +24,7 @@ import Title from "./components/Title";
 import Instructions from "./components/Instructions";
 import EnemyGrid from "./components/EnemyGrid";
 import ConnectionStatus from "./components/ConnectionStatus";
+import WinBanner from "./components/WinBanner";
 
 export default {
   name: "App",
@@ -30,6 +32,7 @@ export default {
   components: {
     Instructions,
     Title,
+    WinBanner,
     CommandBox,
     Grid,
     EnemyGrid,

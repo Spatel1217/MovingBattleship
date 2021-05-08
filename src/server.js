@@ -24,6 +24,7 @@ server.listen(3000, () => console.log('server started'));
 const connections = [null, null];
 
 let maps = []
+let spectators = 0;
 
 function resetMaps() {
     for (const i in [0, 1]) {
@@ -45,6 +46,7 @@ function hitResult(index, x, y) {
             }
             if (boatGroups[index % 2].allDestroyed()) {
                 console.log("Game Over P" + (index % 2 + 1) + ' Wins!');
+                io.emit("game-over", (index % 2 + 1))
             }
             return 'destroyed';
         }
@@ -70,11 +72,20 @@ io.on('connection', (socket) => {
     let playerNumber = parseInt(playerIndex) + 1;
 
     console.log('Player ' + playerNumber + ' Connected')
-    socket.broadcast.emit('player-connect', playerNumber);
+    io.emit('player-connect', playerNumber);
     socket.emit('player-number', playerNumber);
     io.emit('board-change', {maps});
 
-    if (playerNumber != 0) {
+    //Emit connection spots status
+    if (connections[0] !== null) {
+        socket.emit('p1-taken', 1);
+    }
+    if (connections[1] !== null) {
+        socket.emit('p2-taken', 1)
+    }
+
+
+    if (playerNumber !== 0) {
         // When client does something
         socket.on('actuate', (data) => {
             console.log(`Actuation from ${playerNumber}`);
@@ -114,10 +125,20 @@ io.on('connection', (socket) => {
             resetMaps()
             io.emit('board-change', {maps});
         })
-
-        socket.on('disconnect', () => {
-            console.log(`Player ${playerNumber} Disconnected`);
-            connections[playerIndex] = null;
-        });
+    } else {
+        spectators++;
+        socket.emit('spectator-count', (spectators))
     }
+
+    socket.on('disconnect', () => {
+        console.log(`Player ${playerNumber} Disconnected`);
+
+        socket.broadcast.emit('player-disconnect', playerNumber)
+        console.log("test")
+        if (playerNumber === 0) {
+            spectators--;
+            socket.emit('spectator-count', (spectators))
+        }
+        connections[playerIndex] = null;
+    });
 });

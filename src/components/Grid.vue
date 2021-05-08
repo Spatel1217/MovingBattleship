@@ -47,7 +47,7 @@ export default {
       playerMap: Array.from({ length: 10}, () =>
           Array.from({length: 10}, () => '')
       ),
-      playerNumber: 0,
+      playerNumber: -1,
     }
   },
   methods: {
@@ -116,6 +116,22 @@ export default {
       this.emitter.emit('player-connect', (playerNumber))
     })
 
+    this.socket.on('player-disconnect', (playerNumber) => {
+      this.emitter.emit('player-disconnect', (playerNumber))
+    })
+
+    this.socket.on('spectator-count', (spectatorCount) => {
+      this.emitter.emit('spectator-count', (spectatorCount))
+    })
+
+    this.socket.on('p1-taken', (p1Taken) => {
+      this.emitter.emit(p1Taken)
+    })
+
+    this.socket.on('p2-taken', (p2Taken) => {
+      this.emitter.emit(p2Taken)
+    })
+
     this.emitter.on('send-command', (data) => {
       // console.log('sending command: ' + data.command)
       this.socket.emit('actuate', data)
@@ -132,6 +148,11 @@ export default {
     this.emitter.on('reset', () => {
       console.log('resetting')
       this.socket.emit('reset-board')
+    })
+
+    this.socket.on('game-over', (winnerID) => {
+      console.log('ended at Grid')
+      this.emitter.emit('game-over', (winnerID))
     })
 
 
@@ -162,6 +183,7 @@ export default {
 .canvas {
   //transform: rotate(-6deg);
   position: relative;
+  z-index: 1;
   //flex:1;
   //float:left;
   //border: 1px solid black;
@@ -172,6 +194,7 @@ export default {
 
   .frame {
     position: absolute;
+    z-index: 1;
     display: block;
     pointer-events: none;
     top: -15px;

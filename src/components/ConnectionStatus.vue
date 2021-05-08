@@ -20,9 +20,9 @@ export default {
   name: "ConnectionStatus",
   data () {
     return {
-      playerNumber: 0,
+      playerNumber: -1,
       player1Connected: false,
-      player2Connected:false,
+      player2Connected: false,
       spectators:0,
     }
   },
@@ -40,9 +40,28 @@ export default {
           this.spectators++;
         }
       })
+      this.emitter.on('spectator-count', (data) => {
+        this.spectators = data;
+      })
     },
-    p1Status() {
-      if (this.playerNumber === 1) {
+    disconnection(){
+      this.emitter.on('player-disconnect', (data) => {
+        if (data === 1) {
+          this.player1Connected = false;
+          this.p1Status();
+        }
+        if (data === 2) {
+          this.player2Connected = false;
+
+        }
+        if (data === 0) {
+          this.spectStatus()
+        }
+      })
+    },
+
+    p1Status() { //Changes displayed text
+      if (this.playerNumber===1) {
         return "Player 1 Connected (You)"
       } else if (this.player1Connected === true) {
         return "Player 1 Connected"
@@ -52,6 +71,7 @@ export default {
     },
     p2Status() {
       if (this.playerNumber===2) {
+        this.player1Connected = true;
         return "Player 2 Connected (You)"
       } else if (this.player2Connected === true) {
         return "Player 2 Connected"
@@ -60,11 +80,28 @@ export default {
       }
     },
     spectStatus() {
+      if (this.playerNumber===0) {
+        this.player1Connected = true;
+        this.player2Connected = true;
+      }
       if (this.spectators > 0) {
         return "Spectators: " + this.spectators;
       }
     }
-
+  },
+  mounted() {
+    this.connection();
+    this.disconnection();
+    this.emitter.on('p1-taken', (data) => {
+      if (data === 1) {
+        this.player1Connected = true;
+      }
+    })
+    this.emitter.on('p2-taken', (data) => {
+      if (data === 1) {
+        this.player2Connected = true;
+      }
+    })
   },
 }
 </script>
@@ -77,8 +114,6 @@ export default {
   margin-left: 200px;
   margin-top: 200px;
   width: 200px;
-
-
 
 }
 
