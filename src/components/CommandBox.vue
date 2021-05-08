@@ -104,6 +104,7 @@ input {
   width: 100%;
   display: flex;
   flex-direction: column;
+  font-family: monospace;
 }
 
 /*Encompasses the whole Command Box*/
