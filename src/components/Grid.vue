@@ -150,7 +150,7 @@ export default {
       })
 
       this.emitter.on('reset', () => {
-        console.log('resetting')
+        console.log('resetting board')
         this.socket.emit('reset-board')
       })
 
@@ -163,11 +163,10 @@ export default {
       })
 
       this.emitter.on('play-again', () => {
-        console.log("playing again")
         this.socket.emit('play-again')
       })
 
-      //listen for server broadcasted moves
+      //listen for server-broadcasted moves
       this.socket.on('move', (move) => {
         console.log('P' + move.playerNumber + ': ' + move.command)
       })

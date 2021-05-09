@@ -56,8 +56,10 @@ export default {
         }
       })
 
-      this.emitter.on('game-over', () => {
+      this.emitter.on('game-over', (winner) => {
+        this.previousCommands.push('Game Over, Player ' + winner + ' won!')
         this.stopCommands = true
+        this.scrollDown()
       })
 
       this.emitter.on('new-game', () => {
