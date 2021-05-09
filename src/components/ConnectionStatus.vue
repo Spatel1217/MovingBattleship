@@ -1,117 +1,150 @@
 <template>
   <div class="frame">
-  <header class="heading">
-    Players Connected:
-  </header>
-  <p class="p1">
-    {{p1Status()}}
-  </p>
-  <p class="p2">
-    {{p2Status()}}
-  </p>
-  <p class="spectators">
-    {{spectStatus()}}
-  </p>
+    <header class="heading">
+      {{ boxHeader }}
+    </header>
+    <p class="p1">
+      {{ p1Status }}
+    </p>
+    <p class="p2">
+      {{ p2Status }}
+    </p>
+    <p class="spectators">
+      {{ spectStatus() }}
+    </p>
   </div>
 </template>
 
 <script>
 export default {
   name: "ConnectionStatus",
-  data () {
+  data() {
     return {
       playerNumber: -1,
       player1Connected: false,
       player2Connected: false,
-      spectators:0,
+      p1Status: "Waiting for player...",
+      p2Status: "Waiting for player...",
+      spectators: 0,
+      connected: false,
+      boxHeader: 'Players Connected:',
     }
   },
   methods: {
-    connection() { // Checks connection data
-      this.emitter.on('player-number', (data) => { // Set playerNumber
-        this.playerNumber= data;
+    connection() { // Sets up connection listeners
+      this.emitter.on('player-number', (data) => { // Set playerNumber on assignment
+        this.playerNumber = data;
+        this.connected = true;
+        this.boxHeader = 'Players Connected:';
+        if (data === 1) {
+          this.updateP1Status(true);
+        } else if (data === 2) {
+          this.updateP2Status(true);
+        }
       })
       this.emitter.on('player-connect', (data) => { // Update connection details
-        if (data===1 && this.player1Connected === false) { // New Player 1 Join
-          this.player1Connected = true;
-        } else if (data === 2 && this.player2Connected === false) { // New Player 2 Join
-          this.player2Connected = true;
-        } else if (data === 0 && this.player1Connected === true && this.player2Connected === true) {
-          this.spectators++;
+        // only update status if connection is not us
+        if (data !== this.playerNumber) {
+          if (data === 1) { // New Player 1 Join
+            this.updateP1Status(true)
+          } else if (data === 2) { // New Player 2 Join
+            this.updateP2Status(true)
+          } else if (data === 0 && this.player1Connected === true && this.player2Connected === true) {
+            this.spectators++;
+          }
         }
       })
       this.emitter.on('spectator-count', (data) => {
         this.spectators = data;
       })
     },
-    disconnection(){
-      this.emitter.on('player-disconnect', (data) => {
-        if (data === 1) {
-          this.player1Connected = false;
-          this.p1Status();
+    disconnection() { // Sets up disconnection listeners
+      this.emitter.on('player-disconnect', playerNumber => {
+        if (playerNumber === 1) {
+          this.updateP1Status(false);
         }
-        if (data === 2) {
-          this.player2Connected = false;
-
+        else if (playerNumber === 2) {
+          this.updateP2Status(false);
         }
-        if (data === 0) {
+        else if (playerNumber === 0) {
           this.spectStatus()
         }
       })
-    },
 
-    p1Status() { //Changes displayed text
-      if (this.playerNumber===1) {
-        return "Player 1 Connected (You)"
-      } else if (this.player1Connected === true) {
-        return "Player 1 Connected"
-      } else if (this.player1Connected === false) {
-        return "Waiting for player..."
+      this.emitter.on('logoff', () => {
+        this.playerNumber = -1;
+        this.connected = false;
+        this.updateP1Status(false);
+        this.updateP2Status(false);
+        this.spectStatus();
+        this.boxHeader = 'Disconnected';
+      })
+    },
+    updateP1Status(bool) { //Changes displayed text
+      if(this.connected) {
+        this.player1Connected = bool;
+        if (this.playerNumber === 1) {
+          this.p1Status = "Player 1 Connected (You)"
+        } else if (this.player1Connected) {
+          this.p1Status = "Player 1 Connected"
+        } else if (!this.player1Connected) {
+          this.p1Status = "Waiting for player..."
+        }
+      } else {
+        this.p1Status = ''
       }
     },
-    p2Status() {
-      if (this.playerNumber===2) {
-        this.player1Connected = true;
-        return "Player 2 Connected (You)"
-      } else if (this.player2Connected === true) {
-        return "Player 2 Connected"
-      } else if (this.player2Connected === false) {
-        return "Waiting for player..."
+    updateP2Status(bool) {
+      if(this.connected) {
+        this.player2Connected = bool
+        if (this.playerNumber === 2) {
+          this.p2Status = "Player 2 Connected (You)"
+        } else if (this.player2Connected) {
+          this.p2Status = "Player 2 Connected"
+        } else if (!this.player2Connected) {
+          this.p2Status = "Waiting for player..."
+        }
+      } else {
+        this.p2Status = ''
       }
     },
     spectStatus() {
-      if (this.playerNumber===0) {
-        this.player1Connected = true;
-        this.player2Connected = true;
+      if(this.connected) {
+        if (this.playerNumber === 0) {
+          this.player1Connected = true;
+          this.player2Connected = true;
+        }
+        if (this.spectators > 0) {
+          return "Spectators: " + this.spectators;
+        }
       }
-      if (this.spectators > 0) {
-        return "Spectators: " + this.spectators;
-      }
+    },
+    setUpListeners() {
+      this.connection();
+      this.disconnection();
+      this.emitter.on('p1-taken', (player1) => {
+        this.updateP1Status(player1);
+      })
+      this.emitter.on('p2-taken', (player2) => {
+        this.updateP2Status(player2);
+      })
     }
   },
   mounted() {
-    this.connection();
-    this.disconnection();
-    this.emitter.on('p1-taken', (data) => {
-      if (data === 1) {
-        this.player1Connected = true;
-      }
-    })
-    this.emitter.on('p2-taken', (data) => {
-      if (data === 1) {
-        this.player2Connected = true;
-      }
-    })
+    this.setUpListeners();
   },
 }
 </script>
 
 <style scoped>
+* {
+  font-family: monospace;
+}
+
 .frame {
   position: relative;
-  /*float: right;*/
   border: solid black 1px;
-  margin-left: 200px;
+  margin-left: 225px;
   margin-top: 200px;
   width: 200px;
 

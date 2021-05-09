@@ -5,7 +5,7 @@
     <div class="frame"></div>
     <div class="line" style="margin:-10px">
       <div class="boardLabel">
-        Your Board
+        {{ board1Label }}
       </div>
     </div>
     <div class="line">
@@ -26,10 +26,10 @@
           v-for="m in 10"
           :key="m"
           v-bind:class="{
-            boat: playerMap[m - 1][n - 1] == 'boat',
-            hit: playerMap[m - 1][n - 1] == 'hit',
-            miss: playerMap[m - 1][n - 1] == 'miss',
-            destroyed: playerMap[m - 1][n - 1] == 'destroyed',
+            boat: playerMap[m - 1][n - 1] === 'boat',
+            hit: playerMap[m - 1][n - 1] === 'hit',
+            miss: playerMap[m - 1][n - 1] === 'miss',
+            destroyed: playerMap[m - 1][n - 1] === 'destroyed',
           }"
       >
       </div>
@@ -48,11 +48,12 @@ export default {
           Array.from({length: 10}, () => '')
       ),
       playerNumber: -1,
+      board1Label: 'Your Board',
     }
   },
   methods: {
     resetBoard() {
-      this.hitMap = Array.from({length: 10}, () =>
+      this.playerMap = Array.from({length: 10}, () =>
           Array.from({length: 10}, () => false))
     },
     onResize() {
@@ -86,96 +87,132 @@ export default {
     labelRows(i) {
       return String.fromCharCode(64 + i)
     },
+    clearBoatsFromMap(map) {
+      let resultingMap = map;
+      for (let i = 0; i < map.length; i++) {
+        for (let j = 0; j < map[i].length; j++) {
+          if(map[i][j] === 'boat') {
+            resultingMap[i][j] = '';
+          } else {
+            resultingMap[i][j] = map[i][j];
+          }
+        }
+      }
+      return resultingMap;
+    },
+    setUpListeners() {
+      const io = require("socket.io-client")
+      console.log('connecting...')
+      this.socket = io.connect("https://moving-battleships-server.herokuapp.com")
+      this.resetBoard()
+      //Listen for server-given player number
+      this.socket.on('player-number', (playerNumber) => {
+        console.log('Connected as P' + playerNumber)
+        this.playerNumber = playerNumber
+        if(playerNumber === 0) {
+          this.board1Label = 'P1 Board'
+        } else {
+          this.board1Label = 'Your Board'
+        }
+        this.emitter.emit('player-number', (playerNumber))
+      })
+      //listen for when any player connects
+      this.socket.on('player-connect', (playerNumber) => {
+        this.emitter.emit('player-connect', (playerNumber))
+      })
+
+      this.socket.on('player-disconnect', (playerNumber) => {
+        this.emitter.emit('player-disconnect', (playerNumber))
+      })
+
+      this.socket.on('spectator-count', (spectatorCount) => {
+        this.emitter.emit('spectator-count', (spectatorCount))
+      })
+
+      this.socket.on('p1-taken', (p1Taken) => {
+        this.emitter.emit('p1-taken',p1Taken)
+      })
+
+      this.socket.on('p2-taken', (p2Taken) => {
+        this.emitter.emit('p2-taken', p2Taken)
+      })
+
+      this.emitter.on('send-command', (data) => {
+        this.socket.emit('send-command', data)
+      })
+
+      this.socket.on('firing', (data) => {
+        this.emitter.emit('fire-confirm', data)
+      })
+
+      this.socket.on('fire-error', data => {
+        this.emitter.emit('fire-error', data)
+      })
+
+      this.emitter.on('reset', () => {
+        console.log('resetting')
+        this.socket.emit('reset-board')
+      })
+
+      this.socket.on('game-over', (winnerID) => {
+        this.emitter.emit('game-over', (winnerID))
+      })
+
+      this.socket.on('new-game', () => {
+        this.emitter.emit('new-game')
+      })
+
+      this.emitter.on('play-again', () => {
+        console.log("playing again")
+        this.socket.emit('play-again')
+      })
+
+      //listen for server broadcasted moves
+      this.socket.on('move', (move) => {
+        console.log('P' + move.playerNumber + ': ' + move.command)
+      })
+
+      this.socket.on('board-change', (boardState) => {
+        if (this.playerNumber === 2) {
+          this.playerMap = boardState.maps[0]
+          this.emitter.emit('enemy-map-update', this.clearBoatsFromMap(boardState.maps[1]))
+        } else if (this.playerNumber === 1) {
+          this.playerMap = boardState.maps[1]
+          this.emitter.emit('enemy-map-update', this.clearBoatsFromMap(boardState.maps[0]))
+        } else {
+          //Emit unchanged maps for spectators only (can see both player's boat positions
+          this.playerMap = boardState.maps[0]
+          this.emitter.emit('enemy-map-update', boardState.maps[1])
+        }
+      })
+
+      this.socket.on('logoff', (logoff) => {
+        this.emitter.emit('logoff', (logoff))
+        this.resetBoard()
+        this.socket.disconnect()
+      })
+
+      this.emitter.on('reconnect', () => {
+        if(!this.socket.connected) {
+          this.socket.connect();
+        }
+      })
+    }
   },
   mounted() {
     window.addEventListener("resize", this.onResize)
     window.dispatchEvent(new Event("resize"))
-
-    const io = require("socket.io-client")
-    console.log('connecting...')
-    const local = true // change to true for shared server state
-    this.socket = local ? io.connect("http://localhost:3000") : io.connect("https://moving-battleships-server.herokuapp.com")
-    this.resetBoard()
-    //Listen for server-given player number
-    this.socket.on('player-number', (playerNumber) => {
-      console.log('P' + playerNumber + ' connected')
-      this.playerNumber = playerNumber
-      this.emitter.emit('player-number', (playerNumber))
-    })
-
-    this.socket.on('player-connect', (playerNumber) => {
-      this.emitter.emit('player-connect', (playerNumber))
-    })
-
-    this.socket.on('player-disconnect', (playerNumber) => {
-      this.emitter.emit('player-disconnect', (playerNumber))
-    })
-
-    this.socket.on('spectator-count', (spectatorCount) => {
-      this.emitter.emit('spectator-count', (spectatorCount))
-    })
-
-    this.socket.on('p1-taken', (p1Taken) => {
-      this.emitter.emit(p1Taken)
-    })
-
-    this.socket.on('p2-taken', (p2Taken) => {
-      this.emitter.emit(p2Taken)
-    })
-
-    this.emitter.on('send-command', (data) => {
-      // console.log('sending command: ' + data.command)
-      this.socket.emit('actuate', data)
-    })
-
-    this.socket.on('firing', (data) => {
-      this.emitter.emit('fire-confirm', data)
-    })
-
-    this.socket.on('fire error', (data) => {
-      this.emitter.emit('fire failure', data)
-    })
-
-    this.emitter.on('reset', () => {
-      console.log('resetting')
-      this.socket.emit('reset-board')
-    })
-
-    this.socket.on('game-over', (winnerID) => {
-      this.emitter.emit('game-over', (winnerID))
-    })
-
-    this.socket.on('new-game', () => {
-      this.emitter.emit('new-game')
-    })
-
-    this.socket.on('play-again', () => {
-      this.socket.emit('play-again')
-    })
-
-
-    //listen for server broadcasted moves
-    this.socket.on('move', (move) => {
-      console.log('P' + move.playerNumber + ': ' + move.command)
-    })
-    this.socket.on('board-change', (boardState) => {
-      if (this.playerNumber != 1) {
-        this.playerMap = boardState.maps[0]
-        this.emitter.emit('enemy-map-update', boardState.maps[1])
-      } else {
-        this.playerMap = boardState.maps[1]
-        this.emitter.emit('enemy-map-update', boardState.maps[0])
-      }
-      // this.addSquareText()
-      console.log(boardState.maps)
-    })
-
+    this.setUpListeners()
   }
 }
 </script>
 
 <style scoped lang="less">
 @grid-size: 420px;
+
+* {
+  font-family: "Lucida Grande", monospace;
+}
 
 .canvas {
   //transform: rotate(-6deg);
@@ -244,28 +281,49 @@ export default {
   float: left;
   width: 9% - 0.5px;
   text-align: center;
-  //border: solid black 0.1px;
   padding-top: 10px;
 
+  // From https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
 
 .rowLabels {
   float: left;
-  // 1 px subtracted from width to account for 1px border
+  // .5 px subtracted from width to account for 1px border
   width: 9% - 0.5px;
   height: 50%;
   text-align: center;
   vertical-align: middle;
+  padding-top: 2.75%;
+
+  // From https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
 
 .boardLabel {
   text-align: center;
   font-weight: bold;
   font-stretch: semi-expanded;
-  font-family: "Lucida Grande", monospace;
   color: darkcyan;
   margin: -20px;
 
+  /*From https://stackoverflow.com/questions/826782/how-to-disable-text-selection-highlighting*/
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
 
 </style>

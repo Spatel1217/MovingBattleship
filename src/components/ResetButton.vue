@@ -12,7 +12,8 @@ name: "ResetButton",
   },
   methods: {
       resetGame() {
-        this.emitter.emit('play-again')
+        this.emitter.emit('play-again', )
+        console.log("clicked reset")
       }
   },
   mounted() {

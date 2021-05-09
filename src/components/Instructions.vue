@@ -12,7 +12,7 @@ Toggling Button adapted from "https://paulund.co.uk/vuejs-conditional-show-and-h
         <p> Unlike regular Battleship, there are no turns! Shoot as fast as you can!</p>
         <p> Type commands into the Command Box to make your moves. Type "Fire", followed by a Letter and a Number to
           indicate where to fire.</p>
-        <p> Example: Fire A2, fire g4</p>
+        <p> Example: 'Fire A2', 'fire g4'</p>
       </div>
     </div>
   </div>

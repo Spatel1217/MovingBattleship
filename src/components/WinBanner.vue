@@ -30,20 +30,25 @@ export default {
           return "Player 2 Wins!"
         }
       }
-
+    },
+    setupListeners() {
+      this.emitter.on('player-number', (data) => {
+        this.playerNumber = data;
+      })
+      this.emitter.on('game-over', (winnerID) => {
+        this.win = winnerID;
+        this.seen = true;
+      })
+      this.emitter.on('new-game', () => {
+        this.seen = false
+      })
+      this.emitter.on('logoff', () => {
+        this.seen = false
+      })
     }
   },
   mounted() {
-    this.emitter.on('player-number', (data) => {
-      this.playerNumber = data;
-    })
-    this.emitter.on('game-over', (winnerID) => {
-      this.win = winnerID;
-      this.seen = true;
-    })
-    this.emitter.on('new-game', () => {
-      this.seen = false
-    })
+    this.setupListeners();
   }
 
 }

@@ -4,7 +4,7 @@ class BoatGroup {
     size = 5;
     placedBoats = 0;
     selectedBoat = null;
-    boatSizes = [1, 2, 3, 4, 5];
+    boatSizes = [2, 3, 3, 4, 5];
     boats = [];
     _representedMap = [];
 
@@ -44,7 +44,7 @@ class BoatGroup {
             //im sorry to whoever teaches algorithms and sees this
             //finding valid positions for every boat size
             for (const h in [0, 1]) {
-                horizontal = h == 0
+                horizontal = parseInt(h) === 0
                 //for horizontal and vertical placement
                 for (let x = 1; x <= 10; x++) {
                     //for every x

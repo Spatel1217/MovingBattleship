@@ -37,9 +37,9 @@ export default {
     Title,
     WinBanner,
     CommandBox,
-    Grid,
     EnemyGrid,
     ConnectionStatus,
+    Grid,
   },
   data: function () {
     return {

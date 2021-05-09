@@ -21,12 +21,15 @@ const io = require("socket.io")(server, {
     }
 }); // Attach socket.io to our server
 server.listen(3000, () => console.log('server started'));
-const connections = [null, null];
 
-let maps = []
+const connections = [null, null];
+let bothConnected = false;
+let maps = [];
 let spectators = 0;
 let isGameOver = false;
 let winningPlayer = -1;
+let logoffTimer;
+let autoNewGameTimer;
 
 function resetMaps() {
     isGameOver = false;
@@ -44,14 +47,13 @@ function resetMaps() {
 //     return new Promise(resolve => setTimeout(resolve, ms));
 // }
 
-// eslint-disable-next-line no-unused-vars
 function newGame() {
     // await sleep(5000);
     resetMaps()
 }
 
 function hitResult(index, x, y) {
-    if (maps[(index) % 2][x][y] == 'boat') {
+    if (maps[(index) % 2][x][y] === 'boat') {
         //check if boat destroyed and set to 'destroyed'
         let hitBoat = boatGroups[index % 2].hitBoat(x + 1, y + 1);
         if (hitBoat.isDestroyed()) {
@@ -67,16 +69,18 @@ function hitResult(index, x, y) {
             return 'destroyed';
         }
         return 'hit'
-    } else if (maps[(index) % 2][x][y] == '') {
+    } else if (maps[(index) % 2][x][y] === '') {
         return 'miss'
+    } else if (maps[(index) % 2][x][y] === 'hit' || maps[(index) % 2][x][y] === 'destroyed' | maps[(index) % 2][x][y] === 'miss') {
+        return 'already-fired'
     }
+    return maps[(index) % 2][x][y]
 }
 
-resetMaps()
-
+newGame();
 // Handle a socket connection request from web client
 io.on('connection', (socket) => {
-
+    //Calculate player number
     let playerIndex = -1;
     for (const i in connections) {
         if (connections[i] === null) {
@@ -86,59 +90,79 @@ io.on('connection', (socket) => {
         }
     }
     let playerNumber = parseInt(playerIndex) + 1;
+    bothConnected = connections[0] && connections[1];
 
+    //Send initial info on connection
     console.log('Player ' + playerNumber + ' Connected')
     io.emit('player-connect', playerNumber);
     socket.emit('player-number', playerNumber);
     io.emit('board-change', {maps});
     socket.emit('spectator-count', (spectators));
-
     //Emit connection spots status
-    if (connections[0] !== null) {
-        socket.emit('p1-taken', 1);
-    }
-    if (connections[1] !== null) {
-        socket.emit('p2-taken', 1)
+    socket.emit('p1-taken', (connections[0] !== null))
+    socket.emit('p2-taken', (connections[1] !== null))
+
+    function resetLogoffTimer(minutes) {
+        clearTimeout(logoffTimer);
+        logoffTimer = setTimeout(function () {
+            console.log('P' + playerNumber + ' disconnected due to inactivity')
+            socket.emit("logoff", {reason: "Logged off due to inactivity"});
+        }, 1000 * 60 * minutes);
     }
 
-
+    //Set up listeners for players
     if (playerNumber !== 0) {
-        // When client does something
-        socket.on('actuate', (data) => {
-            console.log(`Actuation from ${playerNumber}`);
+        //Set 2 minute inactivity timer if playing
+        resetLogoffTimer(5);
+        //Cancel restarting empty game on player connection
+        clearTimeout(autoNewGameTimer);
 
-            const {command} = data;
+        // When client sends something
+        socket.on('send-command', (data) => {
+            //reset inactivity timer to 5 minutes on receiving command
+            console.log(`Command from ${playerNumber}`);
+            resetLogoffTimer(5);
+            //only accept commands when both players connected
+            if (bothConnected) {
+                const {command} = data;
 
-            const regExp = /^(fire) ([a-j]|[A-J])([1-9]|10)$/ig
-            const matches = regExp.exec(data.command)
+                const regExp = /^(fire) ([a-j]|[A-J])([1-9]|10)$/ig
+                const matches = regExp.exec(data.command)
 
-            if (matches != null && matches[1].toLowerCase() === "fire") {
-                const letter = matches[2]
-                let targetX = letter.charCodeAt(0) - 97 // translate A-J to numerical grid position
-                const number = matches[3]
-                let targetY = number - 1
-                //send something back to commandbox to push the FIRING
-                let hitRes = hitResult(playerIndex, targetX, targetY)
-                socket.emit('firing', {target: [letter, number, hitRes]})  //change to handle hit and miss message if/else to emit once
-                console.log('fired ' + targetX + ',' + targetY)
-                //edits the other player's map
-                maps[(playerIndex) % 2][targetX][targetY] = hitRes;
+                if (matches != null && matches[1].toLowerCase() === "fire") {
+                    const letter = matches[2]
+                    let targetX = letter.charCodeAt(0) - 97 // translate A-J to numerical grid position
+                    const number = matches[3]
+                    let targetY = number - 1
+                    //send something back to commandbox to push the FIRING
+                    let hitRes = hitResult(playerIndex, targetX, targetY)
+                    socket.emit('firing', {target: [letter, number, hitRes]})  //change to handle hit and miss message if/else to emit once
+                    console.log('fired ' + targetX + ',' + targetY)
+                    //edits the other player's map
+                    if (hitRes !== 'already-fired') {
+                        maps[(playerIndex) % 2][targetX][targetY] = hitRes;
+                    }
+                } else {
+                    //send input back to commandbox to push error
+                    socket.emit('fire-error', {command: data.command, error: "unknown-command"});
+                }
+                if (isGameOver) {
+                    //reset logoff timer on game over
+                    resetLogoffTimer(5);
+                    io.emit("game-over", winningPlayer);
+                }
+
+                const move = {
+                    playerNumber,
+                    command,
+                };
+
+                // Emit the player action to all other clients
+                io.emit('move', move);
+                io.emit('board-change', {maps});
             } else {
-                //send something back to commandbox to push DIDNT RECOGNIZE
-                socket.emit('fire error', data);
+                socket.emit('fire-error', {command: data.command, error: "need-more-players"});
             }
-            if (isGameOver) {
-                io.emit("game-over", winningPlayer);
-            }
-
-            const move = {
-                playerNumber,
-                command,
-            };
-
-            // Emit the player action to all other clients
-            io.emit('move', move);
-            io.emit('board-change', {maps});
         });
 
         socket.on('reset-board', () => {
@@ -151,21 +175,32 @@ io.on('connection', (socket) => {
             io.emit('new-game')
             io.emit('board-change', {maps});
         });
-
     } else {
         spectators++;
         socket.emit('spectator-count', (spectators))
     }
 
+    //Set up disconnect for any client
     socket.on('disconnect', () => {
+        clearTimeout(logoffTimer);
         console.log(`Player ${playerNumber} Disconnected`);
-
+        //clear socket from connections
+        connections[playerIndex] = null;
+        bothConnected = false;
+        //check if player left and no players remaining, then restart game
+        if (connections[0] == null && connections[1] == null && playerNumber !== 0) {
+            //wait 3 seconds before restarting
+            autoNewGameTimer = setTimeout(function () {
+                console.log('No players connected, restarting')
+                newGame();
+            }, 1000 * 3);
+        }
+        //emit disconnect to clients
         socket.broadcast.emit('player-disconnect', playerNumber)
-        console.log("test")
+        //update spectator count and send to all
         if (playerNumber === 0) {
             spectators--;
-            socket.emit('spectator-count', (spectators))
+            socket.broadcast.emit('spectator-count', (spectators))
         }
-        connections[playerIndex] = null;
     });
 });
