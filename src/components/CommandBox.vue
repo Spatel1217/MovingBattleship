@@ -99,7 +99,6 @@ export default {
     scrollDown() {
       //Inelegant way to scroll after changes propagate through command history, doesn't scroll to new bottom if round-trip latency > timeout length
       setTimeout(function () {
-        console.log('scrolling down')
         let scroll = document.getElementById('history');
         scroll.scrollTop = scroll.scrollHeight;
       }, 100);
