@@ -33,7 +33,6 @@ export default {
       //   this.emitter.emit('reset')
       // }
       this.currentCommand = ''
-      this.scrollDown()
     },
     setupListeners() {
       //listens for fire confirmation
@@ -59,7 +58,6 @@ export default {
       this.emitter.on('game-over', (winner) => {
         this.previousCommands.push('Game Over, Player ' + winner + ' won!')
         this.stopCommands = true
-        this.scrollDown()
       })
 
       this.emitter.on('new-game', () => {
@@ -86,26 +84,22 @@ export default {
         if(playerNumber > 0 && playerNumber !== this.playerNumber && this.playerNumber !== -1) {
           this.previousCommands.push('Player ' + playerNumber + ' connected')
         }
-        this.scrollDown()
       })
 
       this.emitter.on('player-disconnect', playerNumber => {
         if(playerNumber > 0 && playerNumber !== this.playerNumber) {
           this.previousCommands.push('Player ' + playerNumber + ' disconnected')
         }
-        this.scrollDown()
       })
     },
-    scrollDown() {
-      //Inelegant way to scroll after changes propagate through command history, doesn't scroll to new bottom if round-trip latency > timeout length
-      setTimeout(function () {
-        let scroll = document.getElementById('history');
-        scroll.scrollTop = scroll.scrollHeight;
-      }, 100);
-    }
   },
   mounted() {
     this.setupListeners()
+  },
+  updated() {
+    // update commandbox after vue re-renders
+    let scroll = document.getElementById('history');
+    scroll.scrollTop = scroll.scrollHeight;
   }
 }
 </script>
